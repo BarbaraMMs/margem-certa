@@ -9,7 +9,8 @@ import VolumeProjection from '../components/VolumeProjection'
 import ScenarioSimulator from '../components/ScenarioSimulator'
 import ExportButton from '../components/ExportButton'
 import HowItWorks from './HowItWorks'
-import { calcularPrecificacao, FEES } from '../utils/pricingLogic'
+import { calcularPrecificacao, getFeesParaProduto } from '../utils/pricingLogic'
+import { getCondicoes } from '../utils/storageUtils'
 
 const DEFAULT_COSTS = {
   custoProduto: 35,
@@ -48,14 +49,15 @@ export default function Landing() {
   const query = useMemo(readQueryParams, [])
 
   const [marketplace, setMarketplace] = useState(query.marketplace || 'mercadolivre')
+  const [categoria, setCategoria] = useState(null)
   const [costs, setCosts] = useState({ ...DEFAULT_COSTS, ...query.costs })
   const [sliders, setSliders] = useState({ ...DEFAULT_SLIDERS, ...query.sliders })
   const [unidades, setUnidades] = useState(50)
   const [nomeProduto, setNomeProduto] = useState('')
 
   const resultados = useMemo(() => {
-    return calcularPrecificacao({ ...costs, marketplace, ...sliders })
-  }, [costs, marketplace, sliders])
+    return calcularPrecificacao({ ...costs, marketplace, categoria, ...sliders })
+  }, [costs, marketplace, categoria, sliders])
 
   const melhorDado = useMemo(() => {
     const cl = resultados?.classico
@@ -67,7 +69,7 @@ export default function Landing() {
     return null
   }, [resultados])
 
-  const fees = FEES[marketplace] || FEES.mercadolivre
+  const fees = useMemo(() => getFeesParaProduto(marketplace, categoria, getCondicoes()), [marketplace, categoria])
   const totalPctSemMargem =
     fees.classico + sliders.ads / 100 + sliders.imposto / 100 + sliders.devolucao / 100
 
@@ -85,7 +87,12 @@ export default function Landing() {
         <div className="space-y-8">
           {/* Passo 1 */}
           <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
-            <MarketplaceSelector value={marketplace} onChange={setMarketplace} />
+            <MarketplaceSelector
+              value={marketplace}
+              onChange={setMarketplace}
+              categoria={categoria}
+              onCategoriaChange={setCategoria}
+            />
           </div>
 
           {/* Passo 2 */}

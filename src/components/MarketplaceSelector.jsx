@@ -1,3 +1,6 @@
+import { useEffect } from 'react'
+import { getCategoriasML, getCondicoes } from '../utils/storageUtils'
+
 const MARKETPLACES = [
   { id: 'mercadolivre', label: 'Mercado Livre', emoji: '🛒' },
   { id: 'shopee',       label: 'Shopee',        emoji: '🟠' },
@@ -6,7 +9,18 @@ const MARKETPLACES = [
   { id: 'americanas',   label: 'Americanas',    emoji: '🔴' },
 ]
 
-export default function MarketplaceSelector({ value, onChange }) {
+export default function MarketplaceSelector({ value, onChange, categoria, onCategoriaChange }) {
+  const isML = value === 'mercadolivre'
+  const categorias = isML ? getCategoriasML(getCondicoes()) : []
+
+  useEffect(() => {
+    if (!isML) {
+      onCategoriaChange?.(null)
+    } else if (categorias.length && !categorias.includes(categoria)) {
+      onCategoriaChange?.(categorias[0])
+    }
+  }, [isML])
+
   return (
     <div>
       <h2 className="text-lg font-semibold text-gray-800 mb-3">
@@ -34,6 +48,27 @@ export default function MarketplaceSelector({ value, onChange }) {
           )
         })}
       </div>
+
+      {isML && categorias.length > 0 && (
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Categoria do produto
+          </label>
+          <select
+            value={categoria || categorias[0]}
+            onChange={e => onCategoriaChange?.(e.target.value)}
+            className="w-full sm:w-auto border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400"
+          >
+            {categorias.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+          <p className="text-xs text-gray-400 mt-1">
+            As tarifas usadas são as configuradas em{' '}
+            <a href="/configuracoes" className="text-green-600 hover:underline">Condições Comerciais</a>.
+          </p>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,9 +1,22 @@
+import { getCondicoes } from './storageUtils'
+
 export const FEES = {
   mercadolivre: { classico: 0.13, premium: 0.18 },
   shopee:       { classico: 0.12, premium: 0.12 },
   amazon:       { classico: 0.13, premium: 0.15 },
   magalu:       { classico: 0.13, premium: 0.16 },
   americanas:   { classico: 0.14, premium: 0.17 },
+}
+
+export function getFeesParaProduto(marketplace, categoria, condicoes) {
+  const c = condicoes || getCondicoes()
+  if (c && c.length) {
+    const match = c.find(r => r.marketplace === marketplace && r.categoria === categoria)
+    if (match) return { classico: match.classico, premium: match.premium }
+    const fallback = c.find(r => r.marketplace === marketplace && !r.categoria)
+    if (fallback) return { classico: fallback.classico, premium: fallback.premium }
+  }
+  return FEES[marketplace] || FEES.mercadolivre
 }
 
 export const MARKETPLACE_LABELS = {
@@ -42,10 +55,12 @@ export function calcularPrecificacao({
   freteAbsorvido,
   outrosCustos,
   marketplace,
+  categoria,
   ads,
   imposto,
   devolucao,
   margemAlvo,
+  condicoes,
 }) {
   const custoFixoTotal =
     (Number(custoProduto) || 0) +
@@ -53,7 +68,7 @@ export function calcularPrecificacao({
     (Number(freteAbsorvido) || 0) +
     (Number(outrosCustos) || 0)
 
-  const fees = FEES[marketplace] || FEES.mercadolivre
+  const fees = getFeesParaProduto(marketplace, categoria || null, condicoes)
   const isMercadoLivre = marketplace === 'mercadolivre'
 
   const pctSemFee = ads / 100 + imposto / 100 + devolucao / 100 + margemAlvo / 100

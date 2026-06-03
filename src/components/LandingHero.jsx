@@ -5,19 +5,6 @@ export default function LandingHero() {
 
   return (
     <section className="bg-white min-h-[80vh] flex flex-col">
-      {/* Nav */}
-      <nav className="px-6 py-4 flex items-center justify-between border-b border-gray-100 max-w-6xl mx-auto w-full">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">M</span>
-          </div>
-          <span className="font-bold text-gray-900 text-lg">MargemCerta</span>
-        </div>
-        <span className="text-xs bg-green-100 text-green-700 font-semibold px-3 py-1 rounded-full">
-          100% gratuito no beta
-        </span>
-      </nav>
-
       {/* Hero */}
       <div className="flex-1 flex flex-col items-center justify-center text-center px-6 py-16 max-w-3xl mx-auto">
         <span className="inline-block bg-green-50 text-green-700 text-xs font-semibold px-4 py-1.5 rounded-full mb-6 border border-green-200">
