@@ -8,9 +8,11 @@ import Diagnosis from '../components/Diagnosis'
 import VolumeProjection from '../components/VolumeProjection'
 import ScenarioSimulator from '../components/ScenarioSimulator'
 import ExportButton from '../components/ExportButton'
+import SimuladorFrete from '../components/SimuladorFrete'
+import ComparativoMarketplaces from '../components/ComparativoMarketplaces'
 import HowItWorks from './HowItWorks'
 import { calcularPrecificacao, getFeesParaProduto } from '../utils/pricingLogic'
-import { getCondicoes } from '../utils/storageUtils'
+import { getCondicoes, saveProduto } from '../utils/storageUtils'
 
 const DEFAULT_COSTS = {
   custoProduto: 35,
@@ -54,6 +56,9 @@ export default function Landing() {
   const [sliders, setSliders] = useState({ ...DEFAULT_SLIDERS, ...query.sliders })
   const [unidades, setUnidades] = useState(50)
   const [nomeProduto, setNomeProduto] = useState('')
+  const [modalSalvar, setModalSalvar] = useState(false)
+  const [nomeSalvar, setNomeSalvar] = useState('')
+  const [savedFeedback, setSavedFeedback] = useState(false)
 
   const resultados = useMemo(() => {
     return calcularPrecificacao({ ...costs, marketplace, categoria, ...sliders })
@@ -100,6 +105,20 @@ export default function Landing() {
             <CostInputs values={costs} onChange={setCosts} />
           </div>
 
+          {/* Passo 2B — Simulador de Frete */}
+          <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-100 text-green-700 text-sm font-bold">2B</span>
+              <span className="text-sm font-medium text-gray-600">Simulador de Frete</span>
+            </div>
+            <SimuladorFrete
+              marketplace={marketplace}
+              precoIdealClassico={resultados?.classico?.precoIdeal ?? null}
+              precoIdealPremium={resultados?.premium?.precoIdeal ?? null}
+              onAplicarFrete={(valor) => setCosts(c => ({ ...c, freteAbsorvido: valor }))}
+            />
+          </div>
+
           {/* Passo 3 */}
           <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
             <VariableSliders values={sliders} onChange={setSliders} />
@@ -108,6 +127,16 @@ export default function Landing() {
           {/* Passo 4 */}
           <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
             <ResultCards resultados={resultados} marketplace={marketplace} />
+          </div>
+
+          {/* Passo 4B — Comparativo entre Marketplaces */}
+          <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+            <ComparativoMarketplaces
+              costs={costs}
+              sliders={sliders}
+              condicoes={getCondicoes()}
+              categoria={categoria}
+            />
           </div>
 
           {/* Passo 5 — Diagnóstico */}
@@ -157,6 +186,68 @@ export default function Landing() {
                 sliders={sliders}
                 unidades={unidades}
               />
+              <div className="mt-3">
+                <button
+                  onClick={() => { setNomeSalvar(nomeProduto); setModalSalvar(true) }}
+                  className="flex items-center gap-2 bg-white border border-green-500 text-green-700 hover:bg-green-50 font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+                >
+                  💾 Salvar produto no catálogo
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Modal salvar produto */}
+          {modalSalvar && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+              <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm">
+                <h3 className="text-base font-semibold text-gray-800 mb-1">Salvar produto</h3>
+                <p className="text-xs text-gray-400 mb-4">Dê um nome para identificar este produto no catálogo.</p>
+                <input
+                  autoFocus
+                  type="text"
+                  value={nomeSalvar}
+                  onChange={e => setNomeSalvar(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      saveProduto({ nome: nomeSalvar.trim() || 'Produto sem nome', marketplace, categoria, costs, sliders })
+                      setModalSalvar(false)
+                      setSavedFeedback(true)
+                      setTimeout(() => setSavedFeedback(false), 3000)
+                    }
+                    if (e.key === 'Escape') setModalSalvar(false)
+                  }}
+                  placeholder="Ex: Camiseta P azul — fornecedor X"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-400 mb-4"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      saveProduto({ nome: nomeSalvar.trim() || 'Produto sem nome', marketplace, categoria, costs, sliders })
+                      setModalSalvar(false)
+                      setSavedFeedback(true)
+                      setTimeout(() => setSavedFeedback(false), 3000)
+                    }}
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+                  >
+                    Salvar
+                  </button>
+                  <button
+                    onClick={() => setModalSalvar(false)}
+                    className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Toast feedback de salvo */}
+          {savedFeedback && (
+            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-green-700 text-white text-sm font-semibold px-5 py-3 rounded-xl shadow-lg flex items-center gap-2">
+              ✅ Produto salvo no catálogo!
+              <a href="/catalogo" className="underline ml-1 hover:text-green-200">Ver catálogo →</a>
             </div>
           )}
         </div>

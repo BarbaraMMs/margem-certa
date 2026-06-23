@@ -3,6 +3,8 @@ import { useState } from 'react'
 
 const LINKS = [
   { to: '/', label: 'Calculadora', exact: true },
+  { to: '/dashboard', label: 'Dashboard' },
+  { to: '/catalogo', label: 'Catálogo' },
   { to: '/importar', label: 'Importar Produtos' },
   { to: '/configuracoes', label: 'Condições Comerciais' },
 ]
