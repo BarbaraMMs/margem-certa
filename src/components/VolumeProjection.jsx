@@ -27,7 +27,7 @@ export default function VolumeProjection({ lucroPorUnidade, precoIdeal, onUnidad
   return (
     <div>
       <h2 className="text-lg font-semibold text-gray-800 mb-4">
-        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-100 text-green-700 text-sm font-bold mr-2">6</span>
+        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-brass-100 text-ink-900 text-sm font-bold mr-2">6</span>
         Projeção por volume
       </h2>
       <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-5">
@@ -36,7 +36,7 @@ export default function VolumeProjection({ lucroPorUnidade, precoIdeal, onUnidad
             <label htmlFor="unidades" className="text-sm font-medium text-gray-700">
               Unidades vendidas / mês
             </label>
-            <span className="text-sm font-bold text-green-700">{unidades} un.</span>
+            <span className="text-sm font-bold text-brass-700">{unidades} un.</span>
           </div>
           <input
             id="unidades"

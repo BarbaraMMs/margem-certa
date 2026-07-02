@@ -141,16 +141,15 @@ export default function Resultados() {
 
   const SortIcon = ({ col }) => {
     if (sortCol !== col) return <span className="text-gray-300 ml-1">↕</span>
-    return <span className="text-green-600 ml-1">{sortDir === 'asc' ? '↑' : '↓'}</span>
+    return <span className="text-brass-600 ml-1">{sortDir === 'asc' ? '↑' : '↓'}</span>
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 font-['Inter',sans-serif]">
-      <div className="max-w-6xl mx-auto px-4 py-10">
+    <div className="max-w-6xl mx-auto px-4 py-10">
         {/* Header */}
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">Resultados em Massa</h1>
+            <h1 className="font-display text-2xl font-semibold text-ink-950 mb-1">Resultados em Massa</h1>
             <p className="text-gray-500 text-sm">{resultados.length} produto(s) calculado(s)</p>
           </div>
           <div className="flex gap-2">
@@ -162,7 +161,7 @@ export default function Resultados() {
             </button>
             <button
               onClick={exportCSV}
-              className="bg-green-500 hover:bg-green-600 text-white text-sm font-semibold px-5 py-2 rounded-xl transition-colors flex items-center gap-2"
+              className="bg-ink-900 hover:bg-ink-800 text-white text-sm font-semibold px-5 py-2 rounded-xl transition-colors flex items-center gap-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -206,8 +205,8 @@ export default function Resultados() {
               onClick={() => setFiltro(f)}
               className={`text-sm font-medium px-4 py-1.5 rounded-lg transition-colors ${
                 filtro === f
-                  ? 'bg-green-500 text-white'
-                  : 'bg-white border border-gray-200 text-gray-600 hover:border-green-400'
+                  ? 'bg-ink-900 text-white'
+                  : 'bg-white border border-gray-200 text-gray-600 hover:border-brass-400'
               }`}
             >
               {f}
@@ -243,7 +242,7 @@ export default function Resultados() {
                   const isOpen = expandido === i
                   return (
                     <Fragment key={i}>
-                      <tr className={`hover:bg-gray-50 ${isOpen ? 'bg-green-50' : ''}`}>
+                      <tr className={`hover:bg-gray-50 ${isOpen ? 'bg-brass-100/30' : ''}`}>
                         <td className="px-4 py-3">
                           <p className="font-medium text-gray-900">{p.nome_produto}</p>
                           {p.sku && <p className="text-xs text-gray-400 mt-0.5">{p.sku}</p>}
@@ -266,14 +265,14 @@ export default function Resultados() {
                         <td className="px-4 py-3 text-center">
                           <button
                             onClick={() => setExpandido(isOpen ? null : i)}
-                            className="text-green-600 hover:text-green-800 text-xs font-medium"
+                            className="text-brass-600 hover:text-brass-700 text-xs font-medium"
                           >
                             {isOpen ? 'Fechar' : 'Ver mais'}
                           </button>
                         </td>
                       </tr>
                       {isOpen && (
-                        <tr className="bg-green-50">
+                        <tr className="bg-brass-100/30">
                           <td colSpan={7} className="px-6 py-4">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                               {['classico', 'premium'].map(tipo => {
@@ -328,7 +327,6 @@ export default function Resultados() {
             </table>
           </div>
         </div>
-      </div>
     </div>
   )
 }

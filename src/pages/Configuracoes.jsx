@@ -19,16 +19,15 @@ export default function Configuracoes() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 font-['Inter',sans-serif]">
-      <div className="max-w-4xl mx-auto px-4 py-10">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">Minhas Condições Comerciais</h1>
-          <p className="text-gray-500 text-sm">
-            Configure as taxas de comissão que os marketplaces cobram nas suas vendas.
-            Essa página é a fonte principal de condições comerciais e será usada em toda a calculadora.
-          </p>
-        </div>
+    <div className="max-w-4xl mx-auto px-4 py-10">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="font-display text-2xl font-semibold text-ink-950 mb-1">Minhas Condições Comerciais</h1>
+        <p className="text-gray-500 text-sm">
+          Configure as taxas de comissão que os marketplaces cobram nas suas vendas.
+          Essa página é a fonte principal de condições comerciais e será usada em toda a calculadora.
+        </p>
+      </div>
 
         {/* Aviso */}
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex gap-3">
@@ -60,7 +59,7 @@ export default function Configuracoes() {
         <div className="mt-6 flex flex-wrap items-center gap-3">
           <button
             onClick={handleSalvar}
-            className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors"
+            className="bg-ink-900 hover:bg-ink-800 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors"
           >
             Salvar condições
           </button>
@@ -79,7 +78,6 @@ export default function Configuracoes() {
             </span>
           )}
         </div>
-      </div>
     </div>
   )
 }

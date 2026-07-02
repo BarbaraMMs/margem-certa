@@ -1,24 +1,25 @@
+import { AlertTriangle, AlertCircle, CheckCircle2, Lightbulb } from 'lucide-react'
 import { getDiagnostico } from '../utils/pricingLogic'
 
 const COR_MAP = {
   red: {
     bg: 'bg-red-50',
     border: 'border-red-200',
-    icon: '🚨',
+    icon: AlertCircle,
     titulo: 'text-red-700',
     texto: 'text-red-600',
   },
   orange: {
     bg: 'bg-orange-50',
     border: 'border-orange-200',
-    icon: '⚠️',
+    icon: AlertTriangle,
     titulo: 'text-orange-700',
     texto: 'text-orange-600',
   },
   green: {
     bg: 'bg-green-50',
     border: 'border-green-200',
-    icon: '✅',
+    icon: CheckCircle2,
     titulo: 'text-green-700',
     texto: 'text-green-600',
   },
@@ -33,10 +34,13 @@ export default function Diagnosis({ margemReal, margemAlvo }) {
   return (
     <div className={`rounded-xl border-2 p-4 ${c.bg} ${c.border}`}>
       <div className="flex items-start gap-3">
-        <span className="text-xl mt-0.5">{c.icon}</span>
+        <c.icon className={`w-5 h-5 mt-0.5 shrink-0 ${c.titulo}`} strokeWidth={2} />
         <div>
           <p className={`font-semibold ${c.titulo} mb-1`}>{diag.titulo} {diag.mensagem}</p>
-          <p className={`text-sm ${c.texto}`}>💡 {diag.acao}</p>
+          <p className={`flex items-start gap-1.5 text-sm ${c.texto}`}>
+            <Lightbulb className="w-4 h-4 mt-0.5 shrink-0" strokeWidth={2} />
+            {diag.acao}
+          </p>
         </div>
       </div>
     </div>

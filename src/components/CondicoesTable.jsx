@@ -18,7 +18,7 @@ const PctInput = ({ value, onChange }) => (
     defaultValue={(value * 100).toFixed(1)}
     key={(value * 100).toFixed(1)}
     onBlur={e => onChange(e.target.value)}
-    className="w-20 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-green-400"
+    className="w-20 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-brass-400"
   />
 )
 
@@ -115,7 +115,7 @@ export default function CondicoesTable({ condicoes, onChange }) {
             onClick={() => setActiveTab(mkt)}
             className={`px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 -mb-px transition-colors ${
               activeTab === mkt
-                ? 'border-green-500 text-green-700 bg-green-50'
+                ? 'border-ink-900 text-ink-900 bg-brass-100/40'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
             }`}
           >
@@ -124,7 +124,7 @@ export default function CondicoesTable({ condicoes, onChange }) {
         ))}
         <button
           onClick={() => { setShowNewMkt(v => !v); setNewMktError('') }}
-          className="px-3 py-2 text-sm font-medium text-gray-400 hover:text-green-600 border-b-2 border-transparent -mb-px rounded-t-lg transition-colors"
+          className="px-3 py-2 text-sm font-medium text-gray-400 hover:text-brass-600 border-b-2 border-transparent -mb-px rounded-t-lg transition-colors"
           title="Adicionar marketplace personalizado"
         >
           + Novo
@@ -260,12 +260,12 @@ export default function CondicoesTable({ condicoes, onChange }) {
                   setNewCatErrors(er => ({ ...er, [mkt]: '' }))
                 }}
                 placeholder={`Nova categoria — ${getLabel(mkt, customLabels)}...`}
-                className="border border-gray-300 rounded-lg px-3 py-2 text-sm flex-1 min-w-52 focus:outline-none focus:ring-2 focus:ring-green-400"
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm flex-1 min-w-52 focus:outline-none focus:ring-2 focus:ring-brass-400"
                 onKeyDown={e => e.key === 'Enter' && addCategory(mkt)}
               />
               <button
                 onClick={() => addCategory(mkt)}
-                className="bg-green-500 hover:bg-green-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                className="bg-ink-900 hover:bg-ink-800 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
               >
                 + Adicionar
               </button>

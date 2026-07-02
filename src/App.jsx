@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Navbar from './components/Navbar'
+import AppShell from './components/AppShell'
 import Landing from './pages/Landing'
 import Configuracoes from './pages/Configuracoes'
 import Importar from './pages/Importar'
@@ -10,8 +10,7 @@ import Dashboard from './pages/Dashboard'
 function App() {
   return (
     <BrowserRouter>
-      <Navbar />
-      <div className="pt-14">
+      <AppShell>
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/configuracoes" element={<Configuracoes />} />
@@ -20,7 +19,7 @@ function App() {
           <Route path="/catalogo" element={<Catalogo />} />
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
-      </div>
+      </AppShell>
     </BrowserRouter>
   )
 }

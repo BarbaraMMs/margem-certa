@@ -1,18 +1,19 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import { BarChart3, Package, Star, AlertCircle, PackageOpen } from 'lucide-react'
 import { getCatalogo, getMarketplaceEmoji, getMarketplaceLabel } from '../utils/storageUtils'
 import { calcularMelhorOferta, formatBRL, formatPct } from '../utils/pricingLogic'
 
-function SummaryCard({ emoji, label, value, sub, cor = 'gray' }) {
+function SummaryCard({ icon: Icon, label, value, sub, cor = 'gray' }) {
   const cores = {
     green:  'bg-green-50 border-green-100 text-green-700',
     red:    'bg-red-50 border-red-100 text-red-600',
-    yellow: 'bg-yellow-50 border-yellow-100 text-amber-700',
+    amber:  'bg-amber-50 border-amber-100 text-amber-700',
     gray:   'bg-white border-gray-100 text-gray-700',
   }
   return (
     <div className={`rounded-2xl border shadow-sm p-5 ${cores[cor]}`}>
-      <p className="text-2xl mb-1">{emoji}</p>
+      <Icon className="w-6 h-6 mb-2" strokeWidth={2} />
       <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">{label}</p>
       <p className="text-2xl font-bold">{value}</p>
       {sub && <p className="text-xs mt-1 text-gray-400 truncate">{sub}</p>}
@@ -25,7 +26,7 @@ function BarraHorizontal({ label, emoji, margem, maxMargem }) {
   const cor = margem >= 0.15
     ? 'bg-green-500'
     : margem >= 0.05
-      ? 'bg-yellow-400'
+      ? 'bg-amber-400'
       : 'bg-red-400'
   const textCor = margem >= 0.15 ? 'text-green-700' : margem >= 0.05 ? 'text-amber-700' : 'text-red-600'
 
@@ -80,165 +81,161 @@ export default function Dashboard() {
 
   if (totalProdutos === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 font-['Inter',sans-serif]">
-        <section className="py-10 px-4 max-w-5xl mx-auto">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Dashboard</h1>
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-10 text-center">
-            <p className="text-4xl mb-3">📊</p>
-            <p className="text-gray-600 font-medium mb-1">Nenhum dado para exibir</p>
-            <p className="text-gray-400 text-sm mb-5">
-              Salve pelo menos um produto no catálogo para visualizar o dashboard.
-            </p>
-            <Link
-              to="/catalogo"
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors inline-block"
-            >
-              Ir para o catálogo →
-            </Link>
-          </div>
-        </section>
-      </div>
+      <section className="py-10 px-4 max-w-5xl mx-auto">
+        <h1 className="font-display text-2xl font-semibold text-ink-950 mb-2">Painel</h1>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-10 text-center">
+          <PackageOpen className="w-10 h-10 text-gray-300 mx-auto mb-3" strokeWidth={1.5} />
+          <p className="text-gray-600 font-medium mb-1">Nenhum dado para exibir</p>
+          <p className="text-gray-400 text-sm mb-5">
+            Salve pelo menos um produto no catálogo para visualizar o painel.
+          </p>
+          <Link
+            to="/catalogo"
+            className="bg-ink-900 hover:bg-ink-800 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors inline-block"
+          >
+            Ir para o catálogo →
+          </Link>
+        </div>
+      </section>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 font-['Inter',sans-serif]">
-      <section className="py-10 px-4 max-w-5xl mx-auto space-y-8">
+    <section className="py-10 px-4 max-w-5xl mx-auto space-y-8">
 
-        {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">Dashboard</h1>
-          <p className="text-sm text-gray-500">
-            Aqui você vê um resumo de todos os produtos salvos no seu catálogo.
-            Produtos críticos são aqueles com margem abaixo de 5%.
+      {/* Header */}
+      <div>
+        <h1 className="font-display text-2xl font-semibold text-ink-950 mb-1">Painel</h1>
+        <p className="text-sm text-gray-500">
+          Aqui você vê um resumo de todos os produtos salvos no seu catálogo.
+          Produtos críticos são aqueles com margem abaixo de 5%.
+        </p>
+      </div>
+
+      {/* Cards de resumo */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <SummaryCard
+          icon={Package}
+          label="Produtos salvos"
+          value={totalProdutos}
+          cor="gray"
+        />
+        <SummaryCard
+          icon={BarChart3}
+          label="Margem média"
+          value={formatPct(margemMedia)}
+          cor={margemMedia >= 0.15 ? 'green' : margemMedia >= 0.05 ? 'amber' : 'red'}
+        />
+        <SummaryCard
+          icon={Star}
+          label="Melhor margem"
+          value={formatPct(melhorProduto?.melhor.margemReal)}
+          sub={melhorProduto?.nome || '—'}
+          cor="green"
+        />
+        <SummaryCard
+          icon={AlertCircle}
+          label="Críticos (< 5%)"
+          value={criticos.length}
+          sub={criticos.length > 0 ? criticos.map(p => p.nome).join(', ') : 'Nenhum'}
+          cor={criticos.length > 0 ? 'red' : 'gray'}
+        />
+      </div>
+
+      {/* Alerta críticos */}
+      {criticos.length > 0 && (
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
+          <p className="flex items-center gap-1.5 text-sm font-semibold text-red-700 mb-1">
+            <AlertCircle className="w-4 h-4" strokeWidth={2} />
+            {criticos.length} produto{criticos.length > 1 ? 's' : ''} com margem crítica
           </p>
+          <p className="text-xs text-red-500 mb-3">
+            Estes produtos estão sendo vendidos com margem abaixo de 5%. Revise o preço, o custo do produto ou o frete.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {criticos.map(p => (
+              <Link
+                key={p.id}
+                to={`/?mkt=${p.marketplace}&custo=${p.costs.custoProduto}&emb=${p.costs.custoEmbalagem}&frete=${p.costs.freteAbsorvido}&outros=${p.costs.outrosCustos}&ads=${p.sliders.ads}&imp=${p.sliders.imposto}&dev=${p.sliders.devolucao}&margem=${p.sliders.margemAlvo}`}
+                className="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg font-medium transition-colors"
+              >
+                {p.nome} — {formatPct(p.melhor.margemReal)} → Recalcular
+              </Link>
+            ))}
+          </div>
         </div>
+      )}
 
-        {/* Cards de resumo */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <SummaryCard
-            emoji="📦"
-            label="Produtos salvos"
-            value={totalProdutos}
-            cor="gray"
-          />
-          <SummaryCard
-            emoji="📊"
-            label="Margem média"
-            value={formatPct(margemMedia)}
-            cor={margemMedia >= 0.15 ? 'green' : margemMedia >= 0.05 ? 'yellow' : 'red'}
-          />
-          <SummaryCard
-            emoji="⭐"
-            label="Melhor margem"
-            value={formatPct(melhorProduto?.melhor.margemReal)}
-            sub={melhorProduto?.nome || '—'}
-            cor="green"
-          />
-          <SummaryCard
-            emoji="🔴"
-            label="Críticos (< 5%)"
-            value={criticos.length}
-            sub={criticos.length > 0 ? criticos.map(p => p.nome).join(', ') : 'Nenhum'}
-            cor={criticos.length > 0 ? 'red' : 'gray'}
-          />
+      {/* Gráfico de barras por marketplace */}
+      {porMarketplace.length > 0 && (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <h2 className="text-base font-semibold text-gray-800 mb-1">Margem média por marketplace</h2>
+          <p className="text-xs text-gray-400 mb-5">
+            Média das melhores margens (Clássico ou Premium) de cada produto no marketplace.
+          </p>
+          <div className="space-y-4">
+            {porMarketplace.map(r => (
+              <div key={r.id}>
+                <BarraHorizontal
+                  label={getMarketplaceLabel(r.id)}
+                  emoji={getMarketplaceEmoji(r.id)}
+                  margem={r.media}
+                  maxMargem={maxMargem}
+                />
+                <p className="text-xs text-gray-400 ml-35 mt-0.5 pl-36">
+                  {r.total} produto{r.total > 1 ? 's' : ''}
+                </p>
+              </div>
+            ))}
+          </div>
+          <div className="flex items-center gap-4 mt-5 pt-4 border-t border-gray-100 text-xs text-gray-400">
+            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-green-500 inline-block" /> ≥ 15% (saudável)</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-amber-400 inline-block" /> 5–15% (atenção)</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-red-400 inline-block" /> &lt; 5% (crítico)</span>
+          </div>
         </div>
+      )}
 
-        {/* Alerta críticos */}
-        {criticos.length > 0 && (
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
-            <p className="text-sm font-semibold text-red-700 mb-1">
-              🔴 {criticos.length} produto{criticos.length > 1 ? 's' : ''} com margem crítica
-            </p>
-            <p className="text-xs text-red-500 mb-3">
-              Estes produtos estão sendo vendidos com margem abaixo de 5%. Revise o preço, o custo do produto ou o frete.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {criticos.map(p => (
-                <Link
-                  key={p.id}
-                  to={`/?mkt=${p.marketplace}&custo=${p.costs.custoProduto}&emb=${p.costs.custoEmbalagem}&frete=${p.costs.freteAbsorvido}&outros=${p.costs.outrosCustos}&ads=${p.sliders.ads}&imp=${p.sliders.imposto}&dev=${p.sliders.devolucao}&margem=${p.sliders.margemAlvo}`}
-                  className="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg font-medium transition-colors"
-                >
-                  {p.nome} — {formatPct(p.melhor.margemReal)} → Recalcular
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Gráfico de barras por marketplace */}
-        {porMarketplace.length > 0 && (
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-            <h2 className="text-base font-semibold text-gray-800 mb-1">Margem média por marketplace</h2>
-            <p className="text-xs text-gray-400 mb-5">
-              Média das melhores margens (Clássico ou Premium) de cada produto no marketplace.
-            </p>
-            <div className="space-y-4">
-              {porMarketplace.map(r => (
-                <div key={r.id}>
-                  <BarraHorizontal
-                    label={getMarketplaceLabel(r.id)}
-                    emoji={getMarketplaceEmoji(r.id)}
-                    margem={r.media}
-                    maxMargem={maxMargem}
-                  />
-                  <p className="text-xs text-gray-400 ml-35 mt-0.5 pl-36">
-                    {r.total} produto{r.total > 1 ? 's' : ''}
-                  </p>
-                </div>
-              ))}
-            </div>
-            <div className="flex items-center gap-4 mt-5 pt-4 border-t border-gray-100 text-xs text-gray-400">
-              <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-green-500 inline-block" /> ≥ 15% (saudável)</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-yellow-400 inline-block" /> 5–15% (atenção)</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-red-400 inline-block" /> &lt; 5% (crítico)</span>
-            </div>
-          </div>
-        )}
-
-        {/* Tabela de todos os produtos */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h2 className="text-base font-semibold text-gray-800">Todos os produtos</h2>
-            <Link to="/catalogo" className="text-xs text-green-600 hover:underline">
-              Gerenciar catálogo →
-            </Link>
-          </div>
-          <div className="divide-y divide-gray-50">
-            {dados
-              .sort((a, b) => b.melhor.margemReal - a.melhor.margemReal)
-              .map(p => {
-                const isCritico = p.melhor.margemReal < 0.05
-                return (
-                  <div key={p.id} className={`flex items-center gap-4 px-6 py-3 ${isCritico ? 'bg-red-50' : ''}`}>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-800 truncate">{p.nome || 'Produto sem nome'}</p>
-                      <p className="text-xs text-gray-400">
-                        {getMarketplaceEmoji(p.marketplace)} {getMarketplaceLabel(p.marketplace)}
-                        {p.categoria ? ` · ${p.categoria}` : ''}
-                      </p>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <p className="text-sm font-bold text-gray-800">{formatBRL(p.melhor.precoIdeal)}</p>
-                      <p className={`text-xs font-semibold ${isCritico ? 'text-red-500' : p.melhor.margemReal >= 0.15 ? 'text-green-600' : 'text-amber-600'}`}>
-                        {formatPct(p.melhor.margemReal)}
-                        {isCritico ? ' 🔴' : p.melhor.margemReal >= 0.15 ? ' ✓' : ''}
-                      </p>
-                    </div>
-                    <Link
-                      to={`/?mkt=${p.marketplace}&custo=${p.costs.custoProduto}&emb=${p.costs.custoEmbalagem}&frete=${p.costs.freteAbsorvido}&outros=${p.costs.outrosCustos}&ads=${p.sliders.ads}&imp=${p.sliders.imposto}&dev=${p.sliders.devolucao}&margem=${p.sliders.margemAlvo}`}
-                      className="text-xs bg-gray-100 hover:bg-green-100 text-gray-600 hover:text-green-700 px-3 py-1.5 rounded-lg font-medium transition-colors shrink-0"
-                    >
-                      Calcular
-                    </Link>
+      {/* Tabela de todos os produtos */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+          <h2 className="text-base font-semibold text-gray-800">Todos os produtos</h2>
+          <Link to="/catalogo" className="text-xs text-brass-600 hover:underline">
+            Gerenciar catálogo →
+          </Link>
+        </div>
+        <div className="divide-y divide-gray-50">
+          {dados
+            .sort((a, b) => b.melhor.margemReal - a.melhor.margemReal)
+            .map(p => {
+              const isCritico = p.melhor.margemReal < 0.05
+              return (
+                <div key={p.id} className={`flex items-center gap-4 px-6 py-3 ${isCritico ? 'bg-red-50' : ''}`}>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-800 truncate">{p.nome || 'Produto sem nome'}</p>
+                    <p className="text-xs text-gray-400">
+                      {getMarketplaceEmoji(p.marketplace)} {getMarketplaceLabel(p.marketplace)}
+                      {p.categoria ? ` · ${p.categoria}` : ''}
+                    </p>
                   </div>
-                )
-              })}
-          </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-sm font-bold text-gray-800">{formatBRL(p.melhor.precoIdeal)}</p>
+                    <p className={`text-xs font-semibold ${isCritico ? 'text-red-500' : p.melhor.margemReal >= 0.15 ? 'text-green-600' : 'text-amber-600'}`}>
+                      {formatPct(p.melhor.margemReal)}
+                    </p>
+                  </div>
+                  <Link
+                    to={`/?mkt=${p.marketplace}&custo=${p.costs.custoProduto}&emb=${p.costs.custoEmbalagem}&frete=${p.costs.freteAbsorvido}&outros=${p.costs.outrosCustos}&ads=${p.sliders.ads}&imp=${p.sliders.imposto}&dev=${p.sliders.devolucao}&margem=${p.sliders.margemAlvo}`}
+                    className="text-xs bg-gray-100 hover:bg-brass-100 text-gray-600 hover:text-ink-900 px-3 py-1.5 rounded-lg font-medium transition-colors shrink-0"
+                  >
+                    Calcular
+                  </Link>
+                </div>
+              )
+            })}
         </div>
+      </div>
 
-      </section>
-    </div>
+    </section>
   )
 }

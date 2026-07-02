@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { FileText, Link2, MessageCircle, Check } from 'lucide-react'
 import { formatBRL, formatPct, MARKETPLACE_LABELS } from '../utils/pricingLogic'
 
 export default function ExportButton({ nomeProduto, setNomeProduto, marketplace, resultados, costs, sliders, unidades }) {
@@ -12,14 +13,14 @@ export default function ExportButton({ nomeProduto, setNomeProduto, marketplace,
     const mktLabel = MARKETPLACE_LABELS[marketplace] || marketplace
 
     doc.setFontSize(20)
-    doc.setTextColor(29, 158, 117)
+    doc.setTextColor(22, 35, 63)
     doc.text('MargemCerta', 20, 20)
 
     doc.setFontSize(10)
     doc.setTextColor(100)
     doc.text('Precifique certo. Lucre de verdade.', 20, 27)
 
-    doc.setDrawColor(29, 158, 117)
+    doc.setDrawColor(184, 134, 58)
     doc.line(20, 32, 190, 32)
 
     doc.setFontSize(14)
@@ -30,7 +31,7 @@ export default function ExportButton({ nomeProduto, setNomeProduto, marketplace,
     doc.text(`Data: ${date}`, 20, 61)
 
     doc.setFontSize(12)
-    doc.setTextColor(29, 158, 117)
+    doc.setTextColor(184, 134, 58)
     doc.text('Custos fixos', 20, 75)
     doc.setTextColor(60)
     doc.setFontSize(10)
@@ -40,7 +41,7 @@ export default function ExportButton({ nomeProduto, setNomeProduto, marketplace,
     doc.text(`Outros custos: ${formatBRL(costs.outrosCustos)}`, 20, 104)
 
     doc.setFontSize(12)
-    doc.setTextColor(29, 158, 117)
+    doc.setTextColor(184, 134, 58)
     doc.text('Custos variáveis', 20, 118)
     doc.setTextColor(60)
     doc.setFontSize(10)
@@ -55,7 +56,7 @@ export default function ExportButton({ nomeProduto, setNomeProduto, marketplace,
       const col = tipo === 'classico' ? 20 : 110
 
       doc.setFontSize(12)
-      doc.setTextColor(29, 158, 117)
+      doc.setTextColor(184, 134, 58)
       doc.text(`Anúncio ${label}`, col, 165)
       doc.setTextColor(60)
       doc.setFontSize(10)
@@ -69,7 +70,7 @@ export default function ExportButton({ nomeProduto, setNomeProduto, marketplace,
     }
 
     doc.setFontSize(12)
-    doc.setTextColor(29, 158, 117)
+    doc.setTextColor(184, 134, 58)
     doc.text('Projeção mensal', 20, 205)
     doc.setTextColor(60)
     doc.setFontSize(10)
@@ -122,30 +123,30 @@ export default function ExportButton({ nomeProduto, setNomeProduto, marketplace,
           value={nomeProduto}
           onChange={(e) => setNomeProduto(e.target.value)}
           placeholder="Ex: Camiseta estampada P"
-          className="w-full border border-gray-200 focus:border-green-400 rounded-lg px-3 py-2.5 text-sm outline-none transition-colors"
+          className="w-full border border-gray-200 focus:border-brass-400 rounded-lg px-3 py-2.5 text-sm outline-none transition-colors"
           aria-label="Nome do produto para exportação"
         />
       </div>
       <div className="flex flex-wrap gap-3">
         <button
           onClick={handlePDF}
-          className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+          className="flex items-center gap-2 bg-ink-900 hover:bg-ink-800 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
         >
-          📄 Exportar PDF
+          <FileText className="w-4 h-4" strokeWidth={2} /> Exportar PDF
         </button>
         <button
           onClick={handleShare}
           className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
         >
-          {copied ? '✅ Link copiado!' : '🔗 Compartilhar link'}
+          {copied ? <><Check className="w-4 h-4" strokeWidth={2} /> Link copiado!</> : <><Link2 className="w-4 h-4" strokeWidth={2} /> Compartilhar link</>}
         </button>
         <a
           href={`https://wa.me/?text=${whatsappMsg}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 bg-green-100 hover:bg-green-200 text-green-800 font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors"
+          className="flex items-center gap-2 bg-brass-100 hover:bg-brass-100/70 text-brass-700 font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors"
         >
-          💬 WhatsApp
+          <MessageCircle className="w-4 h-4" strokeWidth={2} /> WhatsApp
         </a>
       </div>
     </div>

@@ -69,7 +69,7 @@ function ResultCard({ tipo, dados, marketplace }) {
       </div>
       <button
         onClick={() => setShowDetails((prev) => !prev)}
-        className="mt-5 w-full text-left text-sm font-medium text-green-700 hover:text-green-900"
+        className="mt-5 w-full text-left text-sm font-medium text-brass-600 hover:text-brass-700"
       >
         {showDetails ? 'Ocultar' : 'Como chegamos neste preço'}
       </button>
@@ -119,7 +119,7 @@ export default function ResultCards({ resultados, marketplace }) {
   return (
     <div>
       <h2 className="text-lg font-semibold text-gray-800 mb-4">
-        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-100 text-green-700 text-sm font-bold mr-2">4</span>
+        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-brass-100 text-ink-900 text-sm font-bold mr-2">4</span>
         Resultado: Clássico vs Premium
       </h2>
       <div className="flex flex-col sm:flex-row gap-4">

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { AlertTriangle, Settings2, Save, Link2, MessageCircle, CheckCircle2 } from 'lucide-react'
 import LandingHero from '../components/LandingHero'
 import MarketplaceSelector from '../components/MarketplaceSelector'
 import CostInputs from '../components/CostInputs'
@@ -119,20 +120,21 @@ export default function Landing() {
     fees.classico + sliders.ads / 100 + sliders.imposto / 100 + sliders.devolucao / 100
 
   return (
-    <div className="min-h-screen bg-gray-50 font-['Inter',sans-serif]">
+    <div>
       <LandingHero />
 
       {/* Calculadora */}
       <section id="calculadora" className="py-12 px-4 max-w-5xl mx-auto">
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-1">Calculadora de Precificação</h2>
+          <h2 className="font-display text-2xl font-semibold text-ink-950 mb-1">Calculadora de Precificação</h2>
           <p className="text-gray-500 text-sm">Preencha os campos e veja o resultado em tempo real</p>
         </div>
 
         <div className="space-y-8">
           {taxesOutdated && (
-            <div className="rounded-2xl border border-yellow-300 bg-yellow-50 p-5 text-sm text-yellow-800">
-              <strong>⚠️ Atenção:</strong> as taxas de marketplace podem ter mudado. Revise suas configurações em "Condições Comerciais" para manter os cálculos precisos.
+            <div className="flex items-start gap-2 rounded-2xl border border-amber-300 bg-amber-50 p-5 text-sm text-amber-800">
+              <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" strokeWidth={2} />
+              <p><strong>Atenção:</strong> as taxas de marketplace podem ter mudado. Revise suas configurações em "Condições Comerciais" para manter os cálculos precisos.</p>
             </div>
           )}
           {/* Passo 1 */}
@@ -150,12 +152,8 @@ export default function Landing() {
             <CostInputs values={costs} onChange={setCosts} />
           </div>
 
-          {/* Passo 2B — Simulador de Frete */}
+          {/* Simulador de Frete (auxiliar do Passo 2) */}
           <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-100 text-green-700 text-sm font-bold">2B</span>
-              <span className="text-sm font-medium text-gray-600">Simulador de Frete</span>
-            </div>
             <SimuladorFrete
               marketplace={marketplace}
               precoIdealClassico={resultados?.classico?.precoIdeal ?? null}
@@ -164,16 +162,16 @@ export default function Landing() {
             />
           </div>
 
-          {/* Passo 2C — Condição comercial própria */}
+          {/* Condição comercial própria (auxiliar do Passo 2, opcional) */}
           <details className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
             <summary className="cursor-pointer flex items-center gap-2 mb-4">
-              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-100 text-green-700 text-sm font-bold">2C</span>
+              <Settings2 className="w-[18px] h-[18px] text-ink-900" strokeWidth={2} />
               <span className="text-sm font-medium text-gray-600">Configurações avançadas (opcional)</span>
             </summary>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
                 <label htmlFor="customFeeClassico" className="text-sm font-medium text-gray-700">
-                  Fee Clássico (%)
+                  Taxa Clássico (%)
                 </label>
                 <input
                   id="customFeeClassico"
@@ -192,13 +190,13 @@ export default function Landing() {
                     }))
                   }}
                   placeholder="Ex: 13"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass-400"
                 />
                 <p className="text-xs text-gray-400">Use apenas como override temporário para o marketplace atual. A página de Condições Comerciais é a fonte principal de taxas padrão.</p>
               </div>
               <div className="flex flex-col gap-2">
                 <label htmlFor="customFeePremium" className="text-sm font-medium text-gray-700">
-                  Fee Premium (%)
+                  Taxa Premium (%)
                 </label>
                 <input
                   id="customFeePremium"
@@ -217,12 +215,12 @@ export default function Landing() {
                     }))
                   }}
                   placeholder="Ex: 18"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass-400"
                 />
                 <p className="text-xs text-gray-400">Se deixado em branco, o app usa a taxa padrão da página de Condições Comerciais.</p>
               </div>
             </div>
-            <div className="mt-3 rounded-2xl bg-green-50 border border-green-100 p-3 text-sm text-green-700">
+            <div className="mt-3 rounded-2xl bg-brass-100 border border-brass-100 p-3 text-sm text-brass-700">
               <p className="font-semibold">Importante</p>
               <p>As taxas padrão devem ser editadas em Condições Comerciais. Este campo serve apenas para testes ou ajustes específicos.</p>
             </div>
@@ -239,7 +237,7 @@ export default function Landing() {
             <ResultCards resultados={resultados} marketplace={marketplace} />
           </div>
 
-          {/* Passo 4B — Comparativo entre Marketplaces */}
+          {/* Comparativo entre Marketplaces (auxiliar do Passo 4) */}
           <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
             <ComparativoMarketplaces
               costs={costs}
@@ -251,7 +249,7 @@ export default function Landing() {
             />
           </div>
 
-          {/* Passo 4C — Glossário rápido */}
+          {/* Glossário rápido (auxiliar do Passo 4) */}
           <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
             <div className="flex items-center justify-between gap-3 mb-4">
               <div>
@@ -260,7 +258,7 @@ export default function Landing() {
               </div>
               <button
                 onClick={() => setShowGlossary((prev) => !prev)}
-                className="text-sm font-semibold text-green-700 hover:text-green-900"
+                className="text-sm font-semibold text-brass-600 hover:text-brass-700"
               >
                 {showGlossary ? 'Ocultar' : 'Mostrar'}
               </button>
@@ -309,7 +307,7 @@ export default function Landing() {
           {melhorDado && (
             <div>
               <h2 className="text-lg font-semibold text-gray-800 mb-3">
-                <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-100 text-green-700 text-sm font-bold mr-2">5</span>
+                <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-brass-100 text-ink-900 text-sm font-bold mr-2">5</span>
                 Diagnóstico automático
               </h2>
               <Diagnosis margemReal={melhorDado.margemReal} margemAlvo={sliders.margemAlvo} />
@@ -340,7 +338,7 @@ export default function Landing() {
           {melhorDado && (
             <div>
               <h2 className="text-lg font-semibold text-gray-800 mb-3">
-                <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-100 text-green-700 text-sm font-bold mr-2">8</span>
+                <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-brass-100 text-ink-900 text-sm font-bold mr-2">8</span>
                 Exportar e compartilhar
               </h2>
               <ExportButton
@@ -355,9 +353,9 @@ export default function Landing() {
               <div className="mt-3">
                 <button
                   onClick={() => { setNomeSalvar(nomeProduto); setModalSalvar(true) }}
-                  className="flex items-center gap-2 bg-white border border-green-500 text-green-700 hover:bg-green-50 font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+                  className="flex items-center gap-2 bg-white border border-ink-900 text-ink-900 hover:bg-ink-100 font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
                 >
-                  💾 Salvar produto no catálogo
+                  <Save className="w-4 h-4" strokeWidth={2} /> Salvar produto no catálogo
                 </button>
               </div>
             </div>
@@ -397,7 +395,7 @@ export default function Landing() {
                     if (e.key === 'Escape') setModalSalvar(false)
                   }}
                   placeholder="Ex: Camiseta P azul — fornecedor X"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-400 mb-4"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass-400 mb-4"
                 />
                 <div className="flex gap-2">
                   <button
@@ -420,7 +418,7 @@ export default function Landing() {
                       setSavedFeedback(true)
                       setTimeout(() => setSavedFeedback(false), 3000)
                     }}
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+                    className="flex-1 bg-ink-900 hover:bg-ink-800 text-white font-semibold py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
                   >
                     Salvar
                   </button>
@@ -438,7 +436,7 @@ export default function Landing() {
           {/* Toast feedback de salvo */}
           {savedFeedback && (
             <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-green-700 text-white text-sm font-semibold px-5 py-3 rounded-xl shadow-lg flex items-center gap-2">
-              ✅ Produto salvo no catálogo!
+              <CheckCircle2 className="w-4 h-4" strokeWidth={2} /> Produto salvo no catálogo!
               <a href="/catalogo" className="underline ml-1 hover:text-green-200">Ver catálogo →</a>
             </div>
           )}
@@ -453,9 +451,9 @@ export default function Landing() {
               O plano gratuito permite até 10 produtos no catálogo. Para salvar mais produtos e usar recursos avançados, atualize para o Pro.
             </p>
             <div className="space-y-3">
-              <div className="rounded-2xl bg-green-50 border border-green-100 p-4 text-sm text-green-700">
+              <div className="rounded-2xl bg-brass-100 border border-brass-100 p-4 text-sm text-brass-700">
                 <p className="font-semibold">Benefícios do Pro</p>
-                <ul className="mt-2 list-disc list-inside space-y-1 text-sm text-green-700">
+                <ul className="mt-2 list-disc list-inside space-y-1 text-sm text-brass-700">
                   <li>Salvar mais de 10 produtos</li>
                   <li>Exportar catálogo .xlsx</li>
                   <li>Condição comercial própria por produto</li>
@@ -464,7 +462,7 @@ export default function Landing() {
               <div className="flex flex-wrap gap-2">
                 <a
                   href="/dashboard"
-                  className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-3 rounded-xl text-sm text-center"
+                  className="flex-1 bg-ink-900 hover:bg-ink-800 text-white font-semibold px-4 py-3 rounded-xl text-sm text-center"
                 >
                   Quero saber mais
                 </a>
@@ -483,25 +481,25 @@ export default function Landing() {
       <HowItWorks />
 
       {/* CTA Final */}
-      <section className="bg-green-500 py-16 px-6 text-center">
-        <h2 className="text-2xl font-bold text-white mb-2">Gostou? Compartilhe com quem vende online.</h2>
-        <p className="text-green-100 mb-6 text-sm">Ajude outros sellers a precificarem com inteligência.</p>
+      <section className="bg-ink-900 py-16 px-6 text-center">
+        <h2 className="font-display text-2xl font-semibold text-white mb-2">Gostou? Compartilhe com quem vende online.</h2>
+        <p className="text-ink-100/80 mb-6 text-sm">Ajude outros sellers a precificarem com inteligência.</p>
         <div className="flex flex-wrap justify-center gap-3">
           <button
             onClick={() => {
               navigator.clipboard.writeText(window.location.origin)
             }}
-            className="bg-white text-green-700 font-semibold px-6 py-3 rounded-xl text-sm hover:bg-green-50 transition-colors cursor-pointer"
+            className="flex items-center gap-2 bg-white text-ink-900 font-semibold px-6 py-3 rounded-xl text-sm hover:bg-ink-100 transition-colors cursor-pointer"
           >
-            🔗 Copiar link
+            <Link2 className="w-4 h-4" strokeWidth={2} /> Copiar link
           </button>
           <a
             href={`https://wa.me/?text=${encodeURIComponent('Calculei o preço ideal do meu produto com o MargemCerta. É gratuito e muito fácil de usar! ' + window.location.origin)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-3 rounded-xl text-sm transition-colors"
+            className="flex items-center gap-2 bg-brass-600 hover:bg-brass-700 text-white font-semibold px-6 py-3 rounded-xl text-sm transition-colors"
           >
-            💬 Compartilhar no WhatsApp
+            <MessageCircle className="w-4 h-4" strokeWidth={2} /> Compartilhar no WhatsApp
           </a>
         </div>
       </section>
@@ -509,14 +507,14 @@ export default function Landing() {
       {/* Rodapé */}
       <footer className="bg-gray-900 text-gray-400 py-8 px-6 text-center">
         <div className="flex items-center justify-center gap-2 mb-2">
-          <div className="w-6 h-6 bg-green-500 rounded flex items-center justify-center">
-            <span className="text-white font-bold text-xs">M</span>
+          <div className="w-6 h-6 bg-brass-600 rounded flex items-center justify-center">
+            <span className="text-ink-950 font-bold text-xs">M</span>
           </div>
           <span className="text-white font-semibold">MargemCerta</span>
         </div>
         <p className="text-sm mb-1">Precifique certo. Lucre de verdade.</p>
         <p className="text-xs">Feito para sellers brasileiros 🇧🇷</p>
-        <a href="mailto:contato@margemcerta.com.br" className="text-xs text-green-400 hover:text-green-300 mt-2 block">
+        <a href="mailto:contato@margemcerta.com.br" className="text-xs text-brass-600 hover:text-white mt-2 block">
           Enviar feedback
         </a>
       </footer>

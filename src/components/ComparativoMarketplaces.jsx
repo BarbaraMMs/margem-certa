@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { Scale, Info } from 'lucide-react'
 import { calcularPrecificacao, formatBRL, formatPct } from '../utils/pricingLogic'
 import { getMarketplaces, getCondicoes } from '../utils/storageUtils'
 
@@ -42,12 +43,15 @@ export default function ComparativoMarketplaces({ costs, sliders, condicoes, cat
 
   return (
     <div>
-      <h2 className="text-lg font-semibold text-gray-800 mb-1">
-        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-100 text-green-700 text-sm font-bold mr-2">4B</span>
+      <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-800 mb-1">
+        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-brass-100 text-ink-900">
+          <Scale className="w-4 h-4" strokeWidth={2} />
+        </span>
         Comparativo entre Marketplaces
       </h2>
-      <p className="text-sm text-gray-500 mb-4 ml-9">
-        ℹ️ Este comparativo usa os mesmos custos que você preencheu acima e recalcula o preço ideal e a margem para cada marketplace configurado em Condições Comerciais.
+      <p className="flex items-start gap-1.5 text-sm text-gray-500 mb-4 ml-9">
+        <Info className="w-3.5 h-3.5 mt-0.5 shrink-0" strokeWidth={2} />
+        Este comparativo usa os mesmos custos que você preencheu acima e recalcula o preço ideal e a margem para cada marketplace configurado em Condições Comerciais.
       </p>
 
       {/* Tabela desktop */}

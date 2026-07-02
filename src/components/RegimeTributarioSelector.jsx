@@ -29,7 +29,7 @@ export default function RegimeTributarioSelector({ value, onChange }) {
               aria-pressed={selecionado}
               className={`flex items-center justify-center gap-1 rounded-full px-3 py-2 text-sm font-medium transition-colors cursor-pointer ${
                 selecionado
-                  ? 'bg-green-800 text-white'
+                  ? 'bg-ink-900 text-white'
                   : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
               }`}
             >

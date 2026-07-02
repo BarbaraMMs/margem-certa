@@ -1,5 +1,36 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
+
+@theme {
+  /* marca */
+  --color-ink-950: #0B111F;
+  --color-ink-900: #16233F;
+  --color-ink-800: #1D2C4E;
+  --color-ink-700: #28395E;
+  --color-ink-100: #E7EAF1;
+
+  --color-brass-700: #96702C;
+  --color-brass-600: #B8863A;
+  --color-brass-100: #F3E8D3;
+
+  --color-canvas: #F7F5F2;
+
+  /* neutros levemente quentes, no lugar do cinza puro padrão do Tailwind */
+  --color-gray-50: #F7F6F4;
+  --color-gray-100: #EFEDE9;
+  --color-gray-200: #E2DFD9;
+  --color-gray-300: #C9C5BC;
+  --color-gray-400: #A6A196;
+  --color-gray-500: #837E72;
+  --color-gray-600: #625E55;
+  --color-gray-700: #494640;
+  --color-gray-800: #302E2A;
+  --color-gray-900: #1C2230;
+  --color-gray-950: #12151C;
+
+  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Fraunces', ui-serif, Georgia, serif;
+}
 
 * {
   box-sizing: border-box;
@@ -7,9 +38,9 @@
 
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif;
-  background-color: #F9FAFB;
-  color: #111827;
+  font-family: var(--font-sans);
+  background-color: var(--color-canvas);
+  color: var(--color-gray-900);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -26,7 +57,7 @@ input[type="range"] {
   appearance: none;
   height: 6px;
   border-radius: 3px;
-  background: #D1FAE5;
+  background: var(--color-brass-100);
   outline: none;
   cursor: pointer;
 }
@@ -37,7 +68,7 @@ input[type="range"]::-webkit-slider-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #1D9E75;
+  background: var(--color-ink-900);
   cursor: pointer;
   border: 2px solid white;
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
@@ -47,7 +78,7 @@ input[type="range"]::-moz-range-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #1D9E75;
+  background: var(--color-ink-900);
   cursor: pointer;
   border: 2px solid white;
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);

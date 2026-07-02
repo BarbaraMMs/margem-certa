@@ -29,7 +29,7 @@ function SliderRow({ label, id, value, onChange, min, max, step = 0.5, suffix = 
             className={`w-16 text-right text-sm font-semibold border rounded-md px-2 py-0.5 outline-none ${
               disabled
                 ? 'bg-gray-100 text-gray-500 border-gray-200 cursor-not-allowed'
-                : 'text-green-700 border-gray-200 focus:border-green-400'
+                : 'text-brass-700 border-gray-200 focus:border-brass-400'
             }`}
             aria-label={`Valor de ${label}`}
           />
@@ -65,12 +65,12 @@ export default function VariableSliders({ values, onChange }) {
   return (
     <div>
       <h2 className="text-lg font-semibold text-gray-800 mb-4">
-        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-100 text-green-700 text-sm font-bold mr-2">3</span>
+        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-brass-100 text-ink-900 text-sm font-bold mr-2">3</span>
         Custos variáveis
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <SliderRow label="Ads / Patrocínio" id="ads" value={values.ads} onChange={set('ads')} min={0} max={30} />
+        <SliderRow label="Investimento em anúncios" id="ads" value={values.ads} onChange={set('ads')} min={0} max={30} />
         <SliderRow
           label={<>Imposto <FieldHelp text="Percentual estimado de imposto sobre o faturamento. Preenchido automaticamente pelo regime tributário selecionado acima." /></>}
           id="imposto"
