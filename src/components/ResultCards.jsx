@@ -36,7 +36,7 @@ function ResultCard({ tipo, dados, marketplace }) {
         </div>
         <div className="flex flex-col gap-1">
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-500">Fee do marketplace</span>
+            <span className="text-sm text-gray-500">Comissão do marketplace</span>
             <span className="text-sm font-medium text-gray-700">{formatBRL(dados.feeEmReais)}</span>
           </div>
           <p className="text-[11px] text-gray-400">Preço ideal × taxa do marketplace</p>

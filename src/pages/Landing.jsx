@@ -504,7 +504,6 @@ export default function Landing() {
             💬 Compartilhar no WhatsApp
           </a>
         </div>
-        <p className="text-green-200 text-xs mt-6">Em breve: salvar produtos, histórico e painel do seller.</p>
       </section>
 
       {/* Rodapé */}

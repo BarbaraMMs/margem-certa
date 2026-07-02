@@ -26,10 +26,10 @@ export const BUILT_IN_EMOJIS = {
 
 export const DEFAULT_CONDITIONS = [
   // ── Mercado Livre — por categoria ──────────────────────────────────────────
-  { marketplace: 'mercadolivre', categoria: 'Eletrônicos, Áudio e Vídeo',    classico: 0.13, premium: 0.18 },
-  { marketplace: 'mercadolivre', categoria: 'Informática',                    classico: 0.13, premium: 0.18 },
-  { marketplace: 'mercadolivre', categoria: 'Telefonia e Celulares',          classico: 0.13, premium: 0.18 },
-  { marketplace: 'mercadolivre', categoria: 'Eletrodomésticos',               classico: 0.13, premium: 0.18 },
+  { marketplace: 'mercadolivre', categoria: 'Eletrônicos, Áudio e Vídeo',    classico: 0.13, premium: 0.19 },
+  { marketplace: 'mercadolivre', categoria: 'Informática',                    classico: 0.13, premium: 0.19 },
+  { marketplace: 'mercadolivre', categoria: 'Telefonia e Celulares',          classico: 0.13, premium: 0.19 },
+  { marketplace: 'mercadolivre', categoria: 'Eletrodomésticos',               classico: 0.13, premium: 0.19 },
   { marketplace: 'mercadolivre', categoria: 'Moda e Acessórios',              classico: 0.16, premium: 0.21 },
   { marketplace: 'mercadolivre', categoria: 'Calçados',                       classico: 0.16, premium: 0.21 },
   { marketplace: 'mercadolivre', categoria: 'Beleza e Cuidado Pessoal',       classico: 0.14, premium: 0.19 },
@@ -44,7 +44,7 @@ export const DEFAULT_CONDITIONS = [
   { marketplace: 'mercadolivre', categoria: 'Veículos e Motores',             classico: 0.12, premium: 0.17 },
   { marketplace: 'mercadolivre', categoria: 'Autopeças',                      classico: 0.12, premium: 0.17 },
   { marketplace: 'mercadolivre', categoria: 'Livros e Revistas',              classico: 0.03, premium: 0.03 },
-  { marketplace: 'mercadolivre', categoria: 'Outras categorias',              classico: 0.13, premium: 0.18 },
+  { marketplace: 'mercadolivre', categoria: 'Outras categorias',              classico: 0.13, premium: 0.19 },
 
   // ── Shopee — taxa única por categoria (sem distinção premium) ───────────────
   { marketplace: 'shopee', categoria: 'Celulares e Acessórios',  classico: 0.05, premium: 0.05 },
