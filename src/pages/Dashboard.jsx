@@ -1,22 +1,7 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { getCatalogo, getMarketplaceEmoji, getMarketplaceLabel } from '../utils/storageUtils'
-import { calcularPrecificacao, formatBRL, formatPct } from '../utils/pricingLogic'
-
-function calcularMelhor(produto) {
-  const res = calcularPrecificacao({
-    ...produto.costs,
-    marketplace: produto.marketplace,
-    categoria: produto.categoria || null,
-    ...produto.sliders,
-  })
-  const cl = res?.classico
-  const pr = res?.premium
-  if (cl && pr && !cl.error && !pr.error) return cl.margemReal >= pr.margemReal ? cl : pr
-  if (cl && !cl.error) return cl
-  if (pr && !pr.error) return pr
-  return null
-}
+import { calcularMelhorOferta, formatBRL, formatPct } from '../utils/pricingLogic'
 
 function SummaryCard({ emoji, label, value, sub, cor = 'gray' }) {
   const cores = {
@@ -67,7 +52,7 @@ export default function Dashboard() {
 
   const dados = useMemo(() => {
     return catalogo.map(p => {
-      const melhor = calcularMelhor(p)
+      const melhor = calcularMelhorOferta(p)
       return { ...p, melhor }
     }).filter(p => p.melhor)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps

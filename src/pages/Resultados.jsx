@@ -296,7 +296,7 @@ export default function Resultados() {
                                       <div className="flex justify-between"><span>Comissão marketplace</span><span>{formatBRL(r.feeEmReais)}</span></div>
                                       <div className="flex justify-between"><span>Lucro por unidade</span><span className="font-semibold text-green-700">{formatBRL(r.lucroPorUnidade)}</span></div>
                                       <div className="flex justify-between"><span>Margem real</span><span className="font-semibold">{formatPct(r.margemReal)}</span></div>
-                                      <div className="flex justify-between"><span>Markup</span><span>{formatPct(r.markup)}</span></div>
+                                      <div className="flex justify-between"><span>Markup total</span><span>{formatPct(r.markup)}</span></div>
                                     </div>
                                   </div>
                                 )

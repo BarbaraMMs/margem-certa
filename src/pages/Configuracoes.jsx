@@ -25,8 +25,8 @@ export default function Configuracoes() {
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-900 mb-1">Minhas Condições Comerciais</h1>
           <p className="text-gray-500 text-sm">
-            Configure as taxas de comissão que o marketplace cobra nas suas vendas.
-            Essas taxas serão usadas na calculadora e na importação em massa.
+            Configure as taxas de comissão que os marketplaces cobram nas suas vendas.
+            Essa página é a fonte principal de condições comerciais e será usada em toda a calculadora.
           </p>
         </div>
 

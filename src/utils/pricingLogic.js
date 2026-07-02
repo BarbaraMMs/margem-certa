@@ -1,22 +1,33 @@
 import { getCondicoes } from './storageUtils'
 
 export const FEES = {
-  mercadolivre: { classico: 0.13, premium: 0.18 },
+  mercadolivre: { classico: 0.13, premium: 0.19 },
   shopee:       { classico: 0.12, premium: 0.12 },
   amazon:       { classico: 0.13, premium: 0.15 },
   magalu:       { classico: 0.13, premium: 0.16 },
   americanas:   { classico: 0.14, premium: 0.17 },
 }
 
-export function getFeesParaProduto(marketplace, categoria, condicoes) {
+export function getFeesParaProduto(marketplace, categoria, condicoes, customFees) {
   const c = condicoes || getCondicoes()
-  if (c && c.length) {
-    const match = c.find(r => r.marketplace === marketplace && r.categoria === categoria)
-    if (match) return { classico: match.classico, premium: match.premium }
-    const fallback = c.find(r => r.marketplace === marketplace && !r.categoria)
-    if (fallback) return { classico: fallback.classico, premium: fallback.premium }
+  const defaultFees = (() => {
+    if (c && c.length) {
+      const match = c.find(r => r.marketplace === marketplace && r.categoria === categoria)
+      if (match) return { classico: match.classico, premium: match.premium }
+      const fallback = c.find(r => r.marketplace === marketplace && !r.categoria)
+      if (fallback) return { classico: fallback.classico, premium: fallback.premium }
+    }
+    return FEES[marketplace] || FEES.mercadolivre
+  })()
+
+  if (customFees && typeof customFees === 'object') {
+    return {
+      classico: Number.isFinite(customFees.classico) ? Number(customFees.classico) : defaultFees.classico,
+      premium: Number.isFinite(customFees.premium) ? Number(customFees.premium) : defaultFees.premium,
+    }
   }
-  return FEES[marketplace] || FEES.mercadolivre
+
+  return defaultFees
 }
 
 export const MARKETPLACE_LABELS = {
@@ -29,15 +40,18 @@ export const MARKETPLACE_LABELS = {
 
 const ML_FRETE_FIXO = 6.00
 const ML_LIMIAR    = 79.00
+const SHOPEE_TAXA_FIXA_POR_PEDIDO = 4
 
-function calcPrecoIdeal({ custoFixoTotal, fee, ads, imposto, devolucao, margemAlvo, isMercadoLivre }) {
+function calcPrecoIdeal({ custoFixoTotal, fee, ads, imposto, devolucao, margemAlvo, isMercadoLivre, isShopee }) {
   const totalPct = fee + ads / 100 + imposto / 100 + devolucao / 100 + margemAlvo / 100
 
   if (totalPct >= 1) return { error: 'overflow' }
 
   const custoAjustado = isMercadoLivre
     ? calcComFreteML(custoFixoTotal, totalPct)
-    : custoFixoTotal
+    : isShopee
+      ? custoFixoTotal + SHOPEE_TAXA_FIXA_POR_PEDIDO
+      : custoFixoTotal
 
   const preco = custoAjustado / (1 - totalPct)
   return { preco, custoAjustado }
@@ -61,15 +75,17 @@ export function calcularPrecificacao({
   devolucao,
   margemAlvo,
   condicoes,
+  customFees,
 }) {
-  const custoFixoTotal =
+  const custoFixoTotalBase =
     (Number(custoProduto) || 0) +
     (Number(custoEmbalagem) || 0) +
     (Number(freteAbsorvido) || 0) +
     (Number(outrosCustos) || 0)
 
-  const fees = getFeesParaProduto(marketplace, categoria || null, condicoes)
+  const fees = getFeesParaProduto(marketplace, categoria || null, condicoes, customFees)
   const isMercadoLivre = marketplace === 'mercadolivre'
+  const isShopee = marketplace === 'shopee'
 
   const pctSemFee = ads / 100 + imposto / 100 + devolucao / 100 + margemAlvo / 100
 
@@ -85,13 +101,14 @@ export function calcularPrecificacao({
     }
 
     const { preco, custoAjustado, error } = calcPrecoIdeal({
-      custoFixoTotal,
+      custoFixoTotal: custoFixoTotalBase,
       fee,
       ads,
       imposto,
       devolucao,
       margemAlvo,
       isMercadoLivre,
+      isShopee,
     })
 
     if (error) {
@@ -108,15 +125,28 @@ export function calcularPrecificacao({
     const totalDescontos = (fee + ads / 100 + imposto / 100 + devolucao / 100) * preco
     const lucroPorUnidade = preco - custoAjustado - totalDescontos
     const margemReal = lucroPorUnidade / preco
-    const markup = custoProduto > 0 ? (preco - custoProduto) / custoProduto : 0
+    const markupAquisicao = custoProduto > 0 ? (preco - custoProduto) / custoProduto : 0
+    const markupTotal = custoFixoTotalBase > 0 ? (preco - custoFixoTotalBase) / custoFixoTotalBase : 0
+    const custoR6Aplicado = isMercadoLivre && custoAjustado > custoFixoTotalBase
 
     resultados[tipo] = {
       precoIdeal: preco,
       feeEmReais,
       lucroPorUnidade,
       margemReal,
-      markup,
+      markup: markupTotal,
+      markupAquisicao,
+      markupTotal,
       custoFixoTotal: custoAjustado,
+      custoFixoTotalBase,
+      custoR6Aplicado,
+      detalheTaxas: {
+        taxaMarketplace: fee,
+        taxaAds: ads / 100,
+        taxaImposto: imposto / 100,
+        taxaDevolucao: devolucao / 100,
+        margemDesejada: margemAlvo / 100,
+      },
     }
   }
 
@@ -132,6 +162,24 @@ export function calcularPrecificacao({
   }
 
   return resultados
+}
+
+/** Recebe um produto salvo no catálogo ({ costs, sliders, marketplace, categoria, customFees })
+ *  e retorna o resultado (clássico ou premium) com a melhor margem real. */
+export function calcularMelhorOferta(produto) {
+  const res = calcularPrecificacao({
+    ...produto.costs,
+    marketplace: produto.marketplace,
+    categoria: produto.categoria || null,
+    ...produto.sliders,
+    customFees: produto.customFees,
+  })
+  const cl = res?.classico
+  const pr = res?.premium
+  if (cl && pr && !cl.error && !pr.error) return cl.margemReal >= pr.margemReal ? cl : pr
+  if (cl && !cl.error) return cl
+  if (pr && !pr.error) return pr
+  return null
 }
 
 export function calcularProjecao({ lucroPorUnidade, unidades }) {

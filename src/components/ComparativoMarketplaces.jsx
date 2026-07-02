@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { calcularPrecificacao, formatBRL, formatPct } from '../utils/pricingLogic'
 import { getMarketplaces, getCondicoes } from '../utils/storageUtils'
 
-export default function ComparativoMarketplaces({ costs, sliders, condicoes, categoria }) {
+export default function ComparativoMarketplaces({ costs, sliders, condicoes, categoria, marketplace, customFees }) {
   const condicoesAtivas = useMemo(() => condicoes || getCondicoes(), [condicoes])
 
   const linhas = useMemo(() => {
@@ -16,6 +16,7 @@ export default function ComparativoMarketplaces({ costs, sliders, condicoes, cat
           categoria: categoria || null,
           ...sliders,
           condicoes: condicoesAtivas,
+          customFees: mkt.id === marketplace ? customFees : null,
         })
 
         const cl = resultado?.classico
@@ -33,7 +34,7 @@ export default function ComparativoMarketplaces({ costs, sliders, condicoes, cat
       })
       .filter(l => l.melhor != null)
       .sort((a, b) => b.melhor.margemReal - a.melhor.margemReal)
-  }, [costs, sliders, condicoesAtivas, categoria])
+  }, [costs, sliders, condicoesAtivas, categoria, marketplace, customFees])
 
   if (!linhas.length) return null
 

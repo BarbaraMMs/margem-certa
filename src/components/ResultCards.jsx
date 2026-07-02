@@ -1,6 +1,9 @@
+import { useState } from 'react'
 import { formatBRL, formatPct } from '../utils/pricingLogic'
 
 function ResultCard({ tipo, dados, marketplace }) {
+  const [showDetails, setShowDetails] = useState(false)
+
   if (!dados) return null
 
   const label = tipo === 'classico' ? 'Clássico' : 'Premium'
@@ -24,31 +27,88 @@ function ResultCard({ tipo, dados, marketplace }) {
       )}
       <h3 className="text-base font-semibold text-gray-700 mb-4">Anúncio {label}</h3>
       <div className="space-y-3">
-        <div className="flex justify-between items-center py-2 border-b border-gray-100">
-          <span className="text-sm text-gray-500">Preço de venda ideal</span>
-          <span className="text-xl font-bold text-gray-900">{formatBRL(dados.precoIdeal)}</span>
+        <div className="flex flex-col gap-1 py-2 border-b border-gray-100">
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-500">Preço de venda ideal</span>
+            <span className={dados.melhorOpcao ? 'text-5xl font-bold text-green-700' : 'text-xl font-bold text-gray-900'}>{formatBRL(dados.precoIdeal)}</span>
+          </div>
+          <p className="text-[11px] text-gray-400">Custo ajustado / (1 - total de taxas)</p>
         </div>
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-500">Fee do marketplace</span>
-          <span className="text-sm font-medium text-gray-700">{formatBRL(dados.feeEmReais)}</span>
+        <div className="flex flex-col gap-1">
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-500">Fee do marketplace</span>
+            <span className="text-sm font-medium text-gray-700">{formatBRL(dados.feeEmReais)}</span>
+          </div>
+          <p className="text-[11px] text-gray-400">Preço ideal × taxa do marketplace</p>
         </div>
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-500">Lucro por unidade</span>
-          <span className={`text-sm font-semibold ${dados.lucroPorUnidade >= 0 ? 'text-green-600' : 'text-red-500'}`}>
-            {formatBRL(dados.lucroPorUnidade)}
-          </span>
+        <div className="flex flex-col gap-1">
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-500">Lucro por unidade</span>
+            <span className={`text-sm font-semibold ${dados.lucroPorUnidade >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+              {formatBRL(dados.lucroPorUnidade)}
+            </span>
+          </div>
+          <p className="text-[11px] text-gray-400">Preço ideal - custo ajustado - outras taxas</p>
         </div>
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-500">Margem líquida real</span>
-          <span className={`text-sm font-bold ${dados.margemReal >= 0.05 ? 'text-green-600' : 'text-red-500'}`}>
-            {formatPct(dados.margemReal)}
-          </span>
+        <div className="flex flex-col gap-1">
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-500">Margem líquida real</span>
+            <span className={`text-sm font-bold ${dados.margemReal >= 0.05 ? 'text-green-600' : 'text-red-500'}`}>
+              {formatPct(dados.margemReal)}
+            </span>
+          </div>
+          <p className="text-[11px] text-gray-400">Lucro por unidade / preço ideal</p>
         </div>
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-500">Markup sobre produto</span>
-          <span className="text-sm text-gray-700">{formatPct(dados.markup)}</span>
+        <div className="flex flex-col gap-1">
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-500">Markup total</span>
+            <span className="text-sm text-gray-700">{formatPct(dados.markup)}</span>
+          </div>
+          <p className="text-[11px] text-gray-400">(Preço ideal - custo total) / custo total</p>
         </div>
       </div>
+      <button
+        onClick={() => setShowDetails((prev) => !prev)}
+        className="mt-5 w-full text-left text-sm font-medium text-green-700 hover:text-green-900"
+      >
+        {showDetails ? 'Ocultar' : 'Como chegamos neste preço'}
+      </button>
+      {showDetails && (
+        <div className="mt-4 rounded-2xl border border-gray-100 bg-gray-50 p-4 text-sm text-gray-700">
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span>Taxa marketplace</span>
+              <span>{formatPct(dados.detalheTaxas.taxaMarketplace)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Taxa de anúncio</span>
+              <span>{formatPct(dados.detalheTaxas.taxaAds)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Imposto estimado</span>
+              <span>{formatPct(dados.detalheTaxas.taxaImposto)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Taxa de devolução</span>
+              <span>{formatPct(dados.detalheTaxas.taxaDevolucao)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Margem desejada</span>
+              <span>{formatPct(dados.detalheTaxas.margemDesejada)}</span>
+            </div>
+            {dados.custoR6Aplicado && (
+              <div className="flex justify-between text-orange-700">
+                <span>Custo extra R$ 6 aplicado</span>
+                <span>R$ 6,00</span>
+              </div>
+            )}
+            <div className="flex justify-between font-semibold border-t border-gray-200 pt-2">
+              <span>Preço ideal calculado</span>
+              <span>{formatBRL(dados.precoIdeal)}</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

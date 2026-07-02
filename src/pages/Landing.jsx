@@ -10,9 +10,11 @@ import ScenarioSimulator from '../components/ScenarioSimulator'
 import ExportButton from '../components/ExportButton'
 import SimuladorFrete from '../components/SimuladorFrete'
 import ComparativoMarketplaces from '../components/ComparativoMarketplaces'
+import RegimeTributarioSelector from '../components/RegimeTributarioSelector'
 import HowItWorks from './HowItWorks'
 import { calcularPrecificacao, getFeesParaProduto } from '../utils/pricingLogic'
-import { getCondicoes, saveProduto } from '../utils/storageUtils'
+import { getCatalogo, getCondicoes, saveProduto, isFreePlan, passou90DiasDesdeAtualizacao, getRegimeTributario, LIMITE_CATALOGO_FREE } from '../utils/storageUtils'
+import { getAliquotaImposto } from '../utils/tributarioUtils'
 
 const DEFAULT_COSTS = {
   custoProduto: 35,
@@ -28,11 +30,18 @@ const DEFAULT_SLIDERS = {
   margemAlvo: 15,
 }
 
+function parseQueryNumber(value) {
+  if (!value) return null
+  const num = parseFloat(value.replace(',', '.'))
+  return Number.isFinite(num) ? num : null
+}
+
 function readQueryParams() {
   const p = new URLSearchParams(window.location.search)
   const costs = {}
   const sliders = {}
   let marketplace = null
+  let customFees = null
 
   if (p.get('mkt')) marketplace = p.get('mkt')
   if (p.get('custo')) costs.custoProduto = parseFloat(p.get('custo')) || DEFAULT_COSTS.custoProduto
@@ -44,7 +53,16 @@ function readQueryParams() {
   if (p.get('dev')) sliders.devolucao = parseFloat(p.get('dev')) || DEFAULT_SLIDERS.devolucao
   if (p.get('margem')) sliders.margemAlvo = parseFloat(p.get('margem')) || DEFAULT_SLIDERS.margemAlvo
 
-  return { costs, sliders, marketplace }
+  const feeClassico = parseQueryNumber(p.get('feeClassico'))
+  const feePremium = parseQueryNumber(p.get('feePremium'))
+  if (feeClassico !== null || feePremium !== null) {
+    customFees = {
+      classico: feeClassico !== null ? feeClassico / 100 : null,
+      premium: feePremium !== null ? feePremium / 100 : null,
+    }
+  }
+
+  return { costs, sliders, marketplace, customFees }
 }
 
 export default function Landing() {
@@ -53,16 +71,37 @@ export default function Landing() {
   const [marketplace, setMarketplace] = useState(query.marketplace || 'mercadolivre')
   const [categoria, setCategoria] = useState(null)
   const [costs, setCosts] = useState({ ...DEFAULT_COSTS, ...query.costs })
-  const [sliders, setSliders] = useState({ ...DEFAULT_SLIDERS, ...query.sliders })
+  const [regimeTributario, setRegimeTributario] = useState(getRegimeTributario())
+  const [sliders, setSliders] = useState({
+    ...DEFAULT_SLIDERS,
+    imposto: getAliquotaImposto(getRegimeTributario()) * 100,
+    ...query.sliders,
+  })
   const [unidades, setUnidades] = useState(50)
   const [nomeProduto, setNomeProduto] = useState('')
   const [modalSalvar, setModalSalvar] = useState(false)
   const [nomeSalvar, setNomeSalvar] = useState('')
   const [savedFeedback, setSavedFeedback] = useState(false)
+  const [customFees, setCustomFees] = useState(query.customFees)
+  const [customFeeClassico, setCustomFeeClassico] = useState(query.customFees?.classico != null ? (query.customFees.classico * 100).toFixed(1) : '')
+  const [customFeePremium, setCustomFeePremium] = useState(query.customFees?.premium != null ? (query.customFees.premium * 100).toFixed(1) : '')
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const [showGlossary, setShowGlossary] = useState(false)
+
+  function handleRegimeChange(regime) {
+    setRegimeTributario(regime)
+    setSliders(s => ({ ...s, imposto: getAliquotaImposto(regime) * 100 }))
+  }
 
   const resultados = useMemo(() => {
-    return calcularPrecificacao({ ...costs, marketplace, categoria, ...sliders })
-  }, [costs, marketplace, categoria, sliders])
+    return calcularPrecificacao({
+      ...costs,
+      marketplace,
+      categoria,
+      ...sliders,
+      customFees,
+    })
+  }, [costs, marketplace, categoria, sliders, customFees])
 
   const melhorDado = useMemo(() => {
     const cl = resultados?.classico
@@ -74,7 +113,8 @@ export default function Landing() {
     return null
   }, [resultados])
 
-  const fees = useMemo(() => getFeesParaProduto(marketplace, categoria, getCondicoes()), [marketplace, categoria])
+  const taxesOutdated = passou90DiasDesdeAtualizacao()
+  const fees = useMemo(() => getFeesParaProduto(marketplace, categoria, getCondicoes(), customFees), [marketplace, categoria, customFees])
   const totalPctSemMargem =
     fees.classico + sliders.ads / 100 + sliders.imposto / 100 + sliders.devolucao / 100
 
@@ -90,6 +130,11 @@ export default function Landing() {
         </div>
 
         <div className="space-y-8">
+          {taxesOutdated && (
+            <div className="rounded-2xl border border-yellow-300 bg-yellow-50 p-5 text-sm text-yellow-800">
+              <strong>⚠️ Atenção:</strong> as taxas de marketplace podem ter mudado. Revise suas configurações em "Condições Comerciais" para manter os cálculos precisos.
+            </div>
+          )}
           {/* Passo 1 */}
           <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
             <MarketplaceSelector
@@ -119,8 +164,73 @@ export default function Landing() {
             />
           </div>
 
+          {/* Passo 2C — Condição comercial própria */}
+          <details className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+            <summary className="cursor-pointer flex items-center gap-2 mb-4">
+              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-100 text-green-700 text-sm font-bold">2C</span>
+              <span className="text-sm font-medium text-gray-600">Configurações avançadas (opcional)</span>
+            </summary>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-2">
+                <label htmlFor="customFeeClassico" className="text-sm font-medium text-gray-700">
+                  Fee Clássico (%)
+                </label>
+                <input
+                  id="customFeeClassico"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  value={customFeeClassico}
+                  onChange={(e) => {
+                    const next = e.target.value
+                    setCustomFeeClassico(next)
+                    const value = parseFloat(next.replace(',', '.'))
+                    setCustomFees((current) => ({
+                      ...current,
+                      classico: Number.isFinite(value) ? value / 100 : null,
+                    }))
+                  }}
+                  placeholder="Ex: 13"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+                />
+                <p className="text-xs text-gray-400">Use apenas como override temporário para o marketplace atual. A página de Condições Comerciais é a fonte principal de taxas padrão.</p>
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="customFeePremium" className="text-sm font-medium text-gray-700">
+                  Fee Premium (%)
+                </label>
+                <input
+                  id="customFeePremium"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  value={customFeePremium}
+                  onChange={(e) => {
+                    const next = e.target.value
+                    setCustomFeePremium(next)
+                    const value = parseFloat(next.replace(',', '.'))
+                    setCustomFees((current) => ({
+                      ...current,
+                      premium: Number.isFinite(value) ? value / 100 : null,
+                    }))
+                  }}
+                  placeholder="Ex: 18"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+                />
+                <p className="text-xs text-gray-400">Se deixado em branco, o app usa a taxa padrão da página de Condições Comerciais.</p>
+              </div>
+            </div>
+            <div className="mt-3 rounded-2xl bg-green-50 border border-green-100 p-3 text-sm text-green-700">
+              <p className="font-semibold">Importante</p>
+              <p>As taxas padrão devem ser editadas em Condições Comerciais. Este campo serve apenas para testes ou ajustes específicos.</p>
+            </div>
+          </details>
+
           {/* Passo 3 */}
-          <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+          <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100 space-y-6">
+            <RegimeTributarioSelector value={regimeTributario} onChange={handleRegimeChange} />
             <VariableSliders values={sliders} onChange={setSliders} />
           </div>
 
@@ -136,7 +246,63 @@ export default function Landing() {
               sliders={sliders}
               condicoes={getCondicoes()}
               categoria={categoria}
+              marketplace={marketplace}
+              customFees={customFees}
             />
+          </div>
+
+          {/* Passo 4C — Glossário rápido */}
+          <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-800">Glossário rápido</h2>
+                <p className="text-sm text-gray-500">Termos essenciais para entender sua margem.</p>
+              </div>
+              <button
+                onClick={() => setShowGlossary((prev) => !prev)}
+                className="text-sm font-semibold text-green-700 hover:text-green-900"
+              >
+                {showGlossary ? 'Ocultar' : 'Mostrar'}
+              </button>
+            </div>
+            {showGlossary ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-700">
+                <div className="space-y-2">
+                  <p className="font-semibold">Taxa de marketplace</p>
+                  <p className="text-gray-500">Percentual retido pelo marketplace sobre o valor da venda.</p>
+                </div>
+                <div className="space-y-2">
+                  <p className="font-semibold">Taxa de anúncio</p>
+                  <p className="text-gray-500">Investimento em publicidade e promoção do produto.</p>
+                </div>
+                <div className="space-y-2">
+                  <p className="font-semibold">Imposto</p>
+                  <p className="text-gray-500">Estimativa de impostos ou encargos embutidos no preço.</p>
+                </div>
+                <div className="space-y-2">
+                  <p className="font-semibold">Devolução</p>
+                  <p className="text-gray-500">Percentual reservado para ressarcir devoluções e quebras.</p>
+                </div>
+                <div className="space-y-2">
+                  <p className="font-semibold">Markup</p>
+                  <p className="text-gray-500">Aumento do preço sobre o custo total fixo do produto.</p>
+                </div>
+                <div className="space-y-2">
+                  <p className="font-semibold">Margem líquida</p>
+                  <p className="text-gray-500">Porcentagem que sobra depois de todos os custos e taxas.</p>
+                </div>
+                <div className="space-y-2">
+                  <p className="font-semibold">Custo fixo total</p>
+                  <p className="text-gray-500">Soma de produto, embalagem, frete absorvido e outros custos.</p>
+                </div>
+                <div className="space-y-2">
+                  <p className="font-semibold">Condição própria</p>
+                  <p className="text-gray-500">Override de taxa usado quando você tem acordo comercial diferenciado.</p>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-gray-500">Clique em mostrar para ver os principais termos usados na calculadora.</p>
+            )}
           </div>
 
           {/* Passo 5 — Diagnóstico */}
@@ -210,7 +376,20 @@ export default function Landing() {
                   onChange={e => setNomeSalvar(e.target.value)}
                   onKeyDown={e => {
                     if (e.key === 'Enter') {
-                      saveProduto({ nome: nomeSalvar.trim() || 'Produto sem nome', marketplace, categoria, costs, sliders })
+                      const currentCatalog = getCatalogo()
+                      const isFree = isFreePlan()
+                      if (isFree && currentCatalog.length >= LIMITE_CATALOGO_FREE) {
+                        setShowUpgradeModal(true)
+                        return
+                      }
+                      saveProduto({
+                        nome: nomeSalvar.trim() || 'Produto sem nome',
+                        marketplace,
+                        categoria,
+                        costs,
+                        sliders,
+                        customFees,
+                      })
                       setModalSalvar(false)
                       setSavedFeedback(true)
                       setTimeout(() => setSavedFeedback(false), 3000)
@@ -223,7 +402,20 @@ export default function Landing() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => {
-                      saveProduto({ nome: nomeSalvar.trim() || 'Produto sem nome', marketplace, categoria, costs, sliders })
+                      const currentCatalog = getCatalogo()
+                      const isFree = isFreePlan()
+                      if (isFree && currentCatalog.length >= LIMITE_CATALOGO_FREE) {
+                        setShowUpgradeModal(true)
+                        return
+                      }
+                      saveProduto({
+                        nome: nomeSalvar.trim() || 'Produto sem nome',
+                        marketplace,
+                        categoria,
+                        costs,
+                        sliders,
+                        customFees,
+                      })
                       setModalSalvar(false)
                       setSavedFeedback(true)
                       setTimeout(() => setSavedFeedback(false), 3000)
@@ -252,6 +444,41 @@ export default function Landing() {
           )}
         </div>
       </section>
+
+      {showUpgradeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Recurso disponível no plano Pro</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              O plano gratuito permite até 10 produtos no catálogo. Para salvar mais produtos e usar recursos avançados, atualize para o Pro.
+            </p>
+            <div className="space-y-3">
+              <div className="rounded-2xl bg-green-50 border border-green-100 p-4 text-sm text-green-700">
+                <p className="font-semibold">Benefícios do Pro</p>
+                <ul className="mt-2 list-disc list-inside space-y-1 text-sm text-green-700">
+                  <li>Salvar mais de 10 produtos</li>
+                  <li>Exportar catálogo .xlsx</li>
+                  <li>Condição comercial própria por produto</li>
+                </ul>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <a
+                  href="/dashboard"
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-3 rounded-xl text-sm text-center"
+                >
+                  Quero saber mais
+                </a>
+                <button
+                  onClick={() => setShowUpgradeModal(false)}
+                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-3 rounded-xl text-sm"
+                >
+                  Fechar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <HowItWorks />
 
@@ -290,7 +517,7 @@ export default function Landing() {
         </div>
         <p className="text-sm mb-1">Precifique certo. Lucre de verdade.</p>
         <p className="text-xs">Feito para sellers brasileiros 🇧🇷</p>
-        <a href="mailto:ba_mms@hotmail.com" className="text-xs text-green-400 hover:text-green-300 mt-2 block">
+        <a href="mailto:contato@margemcerta.com.br" className="text-xs text-green-400 hover:text-green-300 mt-2 block">
           Enviar feedback
         </a>
       </footer>

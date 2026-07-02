@@ -1,60 +1,19 @@
-export const REGIMES = [
-  {
-    id: 'manual',
-    label: 'Informar manualmente',
-    descricao: 'Você define o percentual de imposto.',
-    aliquota: null,
-    bloqueiaSlider: false,
-  },
-  {
-    id: 'mei',
-    label: 'MEI — Microempreendedor Individual',
-    descricao: 'DAS mensal fixo. Para efeito de precificação, use ~5% como referência.',
-    aliquota: 5.0,
-    bloqueiaSlider: false,
-    aviso: 'MEI paga um DAS fixo mensal, não um percentual por venda. Este valor (5%) é uma referência para cobrir o custo do DAS no preço.',
-  },
-  {
-    id: 'simples_faixa1',
-    label: 'Simples Nacional — Faixa 1 (até R$180k/ano)',
-    descricao: 'Alíquota efetiva aproximada de 4% a 6% para comércio.',
-    aliquota: 5.0,
-    bloqueiaSlider: true,
-  },
-  {
-    id: 'simples_faixa2',
-    label: 'Simples Nacional — Faixa 2 (até R$360k/ano)',
-    descricao: 'Alíquota efetiva aproximada de 7% a 9%.',
-    aliquota: 8.0,
-    bloqueiaSlider: true,
-  },
-  {
-    id: 'simples_faixa3',
-    label: 'Simples Nacional — Faixa 3 (até R$720k/ano)',
-    descricao: 'Alíquota efetiva aproximada de 9% a 11%.',
-    aliquota: 10.0,
-    bloqueiaSlider: true,
-  },
-  {
-    id: 'simples_faixa4',
-    label: 'Simples Nacional — Faixa 4 (até R$1,8M/ano)',
-    descricao: 'Alíquota efetiva aproximada de 11% a 14%.',
-    aliquota: 12.5,
-    bloqueiaSlider: true,
-  },
-  {
-    id: 'lucro_presumido',
-    label: 'Lucro Presumido',
-    descricao: 'Carga aproximada de 11,33% para comércio (PIS + COFINS + IRPJ + CSLL).',
-    aliquota: 11.33,
-    bloqueiaSlider: true,
-  },
-  {
-    id: 'lucro_real',
-    label: 'Lucro Real',
-    descricao: 'Alíquota variável. Informe o percentual manualmente após selecionar.',
-    aliquota: null,
-    bloqueiaSlider: false,
-    aviso: 'No Lucro Real a alíquota depende do resultado da empresa. Consulte seu contador.',
-  },
-]
+export const REGIMES = { MEI: 'mei', SIMPLES: 'simples', PRESUMIDO: 'presumido', REAL: 'real' }
+
+// Valores aproximados para cálculo de imposto sobre faturamento
+export const ALIQUOTAS_PADRAO = { mei: 0.05, simples: 0.075, presumido: 0.114, real: 0.15 }
+
+const DESCRICOES_REGIME = {
+  mei: 'MEI (DAS fixo)',
+  simples: 'Simples Nacional',
+  presumido: 'Lucro Presumido',
+  real: 'Lucro Real',
+}
+
+export function getAliquotaImposto(regime) {
+  return ALIQUOTAS_PADRAO[regime] ?? ALIQUOTAS_PADRAO[REGIMES.SIMPLES]
+}
+
+export function getDescricaoRegime(regime) {
+  return DESCRICOES_REGIME[regime] ?? DESCRICOES_REGIME[REGIMES.SIMPLES]
+}

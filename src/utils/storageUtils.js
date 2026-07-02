@@ -1,5 +1,12 @@
 const STORAGE_KEY = 'margem-certa-condicoes'
 const MKT_LABELS_KEY = 'margem-certa-mkt-labels'
+const LAST_CONDICOES_UPDATE_KEY = 'margem-certa-condicoes-atualizadas-em'
+const USER_PLAN_KEY = 'margem-certa-plano'
+const CATALOG_KEY = 'margem-certa-catalogo'
+const REGIME_KEY = 'margem-certa-regime'
+
+/** Limite de produtos salvos no catálogo para o plano Free. */
+export const LIMITE_CATALOGO_FREE = 10
 
 export const BUILT_IN_LABELS = {
   mercadolivre: 'Mercado Livre',
@@ -91,12 +98,51 @@ export function getCondicoes() {
 
 export function saveCondicoes(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+  setLastCondicoesAtualizacao(new Date())
 }
 
 export function resetCondicoes() {
   localStorage.removeItem(STORAGE_KEY)
   localStorage.removeItem(MKT_LABELS_KEY)
+  setLastCondicoesAtualizacao(new Date())
   return DEFAULT_CONDITIONS
+}
+
+export function getLastCondicoesAtualizacao() {
+  try {
+    const raw = localStorage.getItem(LAST_CONDICOES_UPDATE_KEY)
+    if (!raw) return null
+    const date = new Date(raw)
+    return Number.isFinite(date.getTime()) ? date : null
+  } catch { return null }
+}
+
+export function setLastCondicoesAtualizacao(date = new Date()) {
+  localStorage.setItem(LAST_CONDICOES_UPDATE_KEY, date.toISOString())
+}
+
+export function passou90DiasDesdeAtualizacao() {
+  const atualizacao = getLastCondicoesAtualizacao()
+  if (!atualizacao) return false
+  const agora = new Date()
+  const diff = agora.getTime() - atualizacao.getTime()
+  return diff > 90 * 24 * 60 * 60 * 1000
+}
+
+export function getUserPlan() {
+  try {
+    const raw = localStorage.getItem(USER_PLAN_KEY)
+    if (raw) return raw
+  } catch { /* ignore */ }
+  return 'free'
+}
+
+export function isFreePlan() {
+  return getUserPlan() === 'free'
+}
+
+export function setUserPlan(plan) {
+  localStorage.setItem(USER_PLAN_KEY, plan)
 }
 
 // ── Labels de marketplaces personalizados ──────────────────────────────────
@@ -159,8 +205,6 @@ export function getCategoriasML(condicoes) {
 
 // ── Catálogo de produtos salvos ────────────────────────────────────────────
 
-const CATALOG_KEY = 'margem-certa-catalogo'
-
 export function getCatalogo() {
   try { return JSON.parse(localStorage.getItem(CATALOG_KEY)) || [] }
   catch { return [] }
@@ -169,8 +213,9 @@ export function getCatalogo() {
 export function saveProduto(produto) {
   const catalogo = getCatalogo()
   const id = produto.id || crypto.randomUUID()
-  const novo = { ...produto, id, atualizadoEm: new Date().toISOString() }
   const idx = catalogo.findIndex(p => p.id === id)
+  const criadoEm = catalogo[idx]?.criadoEm || produto.criadoEm || new Date().toISOString()
+  const novo = { ...produto, id, criadoEm, atualizadoEm: new Date().toISOString() }
   if (idx >= 0) catalogo[idx] = novo
   else catalogo.push(novo)
   localStorage.setItem(CATALOG_KEY, JSON.stringify(catalogo))
@@ -180,4 +225,18 @@ export function saveProduto(produto) {
 export function deleteProduto(id) {
   const filtrado = getCatalogo().filter(p => p.id !== id)
   localStorage.setItem(CATALOG_KEY, JSON.stringify(filtrado))
+}
+
+// ── Regime tributário ──────────────────────────────────────────────────────
+
+export function getRegimeTributario() {
+  try {
+    const raw = localStorage.getItem(REGIME_KEY)
+    if (raw) return raw
+  } catch { /* ignore */ }
+  return 'simples'
+}
+
+export function setRegimeTributario(regime) {
+  localStorage.setItem(REGIME_KEY, regime)
 }

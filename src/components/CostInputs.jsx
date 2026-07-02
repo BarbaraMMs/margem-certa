@@ -1,3 +1,5 @@
+import FieldHelp from './FieldHelp'
+
 function MoneyInput({ label, id, value, onChange, required }) {
   const handleChange = (e) => {
     const raw = e.target.value.replace(/\D/g, '')
@@ -13,8 +15,9 @@ function MoneyInput({ label, id, value, onChange, required }) {
 
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-sm font-medium text-gray-700">
+      <label htmlFor={id} className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
         {label}
+        <FieldHelp text={`Taxa e custo: ${label}`} />
         {required && <span className="text-red-500 ml-1">*</span>}
       </label>
       <div className={`flex items-center border-2 rounded-lg overflow-hidden bg-white transition-colors
