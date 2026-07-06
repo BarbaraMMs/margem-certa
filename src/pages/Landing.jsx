@@ -1,6 +1,8 @@
-import { useState, useEffect, useMemo } from 'react'
-import { AlertTriangle, Settings2, Save, Link2, MessageCircle, CheckCircle2 } from 'lucide-react'
+import { useState, useEffect, useRef, useMemo } from 'react'
+import { AlertTriangle, Settings2, Save, Link2, MessageCircle, CheckCircle2, MessageSquare } from 'lucide-react'
 import LandingHero from '../components/LandingHero'
+import FeedbackSurvey from '../components/FeedbackSurvey'
+import { trackProductCalculated } from '../utils/supabaseUtils'
 import MarketplaceSelector from '../components/MarketplaceSelector'
 import CostInputs from '../components/CostInputs'
 import VariableSliders from '../components/VariableSliders'
@@ -88,6 +90,26 @@ export default function Landing() {
   const [customFeePremium, setCustomFeePremium] = useState(query.customFees?.premium != null ? (query.customFees.premium * 100).toFixed(1) : '')
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [showGlossary, setShowGlossary] = useState(false)
+  const [showFeedback, setShowFeedback] = useState(false)
+
+  // Rastreia quando o usuário interagiu com a calculadora (mudou custos pelo menos 1x)
+  const interactionCount = useRef(0)
+  const feedbackShown = useRef(Boolean(localStorage.getItem('mc-feedback-shown')))
+
+  // Dispara o survey de feedback automaticamente após 3 interações com a calculadora
+  useEffect(() => {
+    interactionCount.current += 1
+    if (interactionCount.current >= 3 && !feedbackShown.current) {
+      const timer = setTimeout(() => {
+        if (!feedbackShown.current) {
+          feedbackShown.current = true
+          localStorage.setItem('mc-feedback-shown', '1')
+          setShowFeedback(true)
+        }
+      }, 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [costs, sliders]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleRegimeChange(regime) {
     setRegimeTributario(regime)
@@ -380,7 +402,7 @@ export default function Landing() {
                         setShowUpgradeModal(true)
                         return
                       }
-                      saveProduto({
+                      const produto = saveProduto({
                         nome: nomeSalvar.trim() || 'Produto sem nome',
                         marketplace,
                         categoria,
@@ -388,6 +410,7 @@ export default function Landing() {
                         sliders,
                         customFees,
                       })
+                      trackProductCalculated({ nome: produto.nome, marketplace, precoIdeal: melhorDado?.precoIdeal })
                       setModalSalvar(false)
                       setSavedFeedback(true)
                       setTimeout(() => setSavedFeedback(false), 3000)
@@ -406,7 +429,7 @@ export default function Landing() {
                         setShowUpgradeModal(true)
                         return
                       }
-                      saveProduto({
+                      const produto = saveProduto({
                         nome: nomeSalvar.trim() || 'Produto sem nome',
                         marketplace,
                         categoria,
@@ -414,6 +437,7 @@ export default function Landing() {
                         sliders,
                         customFees,
                       })
+                      trackProductCalculated({ nome: produto.nome, marketplace, precoIdeal: melhorDado?.precoIdeal })
                       setModalSalvar(false)
                       setSavedFeedback(true)
                       setTimeout(() => setSavedFeedback(false), 3000)
@@ -478,6 +502,8 @@ export default function Landing() {
         </div>
       )}
 
+      {showFeedback && <FeedbackSurvey onClose={() => setShowFeedback(false)} />}
+
       <HowItWorks />
 
       {/* CTA Final */}
@@ -492,6 +518,12 @@ export default function Landing() {
             className="flex items-center gap-2 bg-white text-ink-900 font-semibold px-6 py-3 rounded-xl text-sm hover:bg-ink-100 transition-colors cursor-pointer"
           >
             <Link2 className="w-4 h-4" strokeWidth={2} /> Copiar link
+          </button>
+          <button
+            onClick={() => setShowFeedback(true)}
+            className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold px-6 py-3 rounded-xl text-sm transition-colors cursor-pointer"
+          >
+            <MessageSquare className="w-4 h-4" strokeWidth={2} /> Avaliar a ferramenta
           </button>
           <a
             href={`https://wa.me/?text=${encodeURIComponent('Calculei o preço ideal do meu produto com o MargemCerta. É gratuito e muito fácil de usar! ' + window.location.origin)}`}
