@@ -96,10 +96,10 @@ function ResultCard({ tipo, dados, marketplace }) {
               <span>Margem desejada</span>
               <span>{formatPct(dados.detalheTaxas.margemDesejada)}</span>
             </div>
-            {dados.custoR6Aplicado && (
+            {dados.faixaPrecoShopee && (
               <div className="flex justify-between text-orange-700">
-                <span>Custo extra R$ 6 aplicado</span>
-                <span>R$ 6,00</span>
+                <span>Faixa de preço Shopee aplicada</span>
+                <span>{dados.faixaPrecoShopee}</span>
               </div>
             )}
             <div className="flex justify-between font-semibold border-t border-gray-200 pt-2">
@@ -107,6 +107,20 @@ function ResultCard({ tipo, dados, marketplace }) {
               <span>{formatBRL(dados.precoIdeal)}</span>
             </div>
           </div>
+
+          {dados.detalheTaxas?.itens?.length > 0 && (
+            <div className="mt-4 border-t border-gray-200 pt-3">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Detalhamento em R$ (por unidade)</p>
+              <div className="space-y-1.5">
+                {dados.detalheTaxas.itens.map((item, i) => (
+                  <div key={i} className="flex justify-between text-sm">
+                    <span className="text-gray-600">{item.label}</span>
+                    <span className="font-medium text-gray-800">{formatBRL(item.valor)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

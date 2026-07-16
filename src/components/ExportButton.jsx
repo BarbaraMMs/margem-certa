@@ -50,6 +50,7 @@ export default function ExportButton({ nomeProduto, setNomeProduto, marketplace,
     doc.text(`Devolução: ${sliders.devolucao}%`, 20, 140)
     doc.text(`Margem alvo: ${sliders.margemAlvo}%`, 20, 147)
 
+    let maxItemY = 195
     for (const tipo of ['classico', 'premium']) {
       const d = resultados?.[tipo]
       const label = tipo === 'classico' ? 'Clássico' : 'Premium'
@@ -64,20 +65,32 @@ export default function ExportButton({ nomeProduto, setNomeProduto, marketplace,
         doc.text(`Preço ideal: ${formatBRL(d.precoIdeal)}`, col, 173)
         doc.text(`Lucro/un.: ${formatBRL(d.lucroPorUnidade)}`, col, 180)
         doc.text(`Margem real: ${formatPct(d.margemReal)}`, col, 187)
+
+        doc.setFontSize(9)
+        doc.setTextColor(120)
+        doc.text('Detalhamento de taxas (por unidade):', col, 195)
+        doc.setTextColor(70)
+        let y = 201
+        for (const item of d.detalheTaxas?.itens || []) {
+          doc.text(`${item.label}: ${formatBRL(item.valor)}`, col, y)
+          y += 5.5
+        }
+        maxItemY = Math.max(maxItemY, y)
       } else {
         doc.text('Não calculado', col, 173)
       }
     }
 
+    const projY = maxItemY + 8
     doc.setFontSize(12)
     doc.setTextColor(184, 134, 58)
-    doc.text('Projeção mensal', 20, 205)
+    doc.text('Projeção mensal', 20, projY)
     doc.setTextColor(60)
     doc.setFontSize(10)
     const melhor = resultados?.classico?.melhorOpcao ? resultados.classico : resultados?.premium
     if (melhor && !melhor.error) {
-      doc.text(`Volume: ${unidades} unidades/mês`, 20, 213)
-      doc.text(`Lucro mensal: ${formatBRL(melhor.lucroPorUnidade * unidades)}`, 20, 220)
+      doc.text(`Volume: ${unidades} unidades/mês`, 20, projY + 8)
+      doc.text(`Lucro mensal: ${formatBRL(melhor.lucroPorUnidade * unidades)}`, 20, projY + 15)
     }
 
     doc.setFontSize(8)

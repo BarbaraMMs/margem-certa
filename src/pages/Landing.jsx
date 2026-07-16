@@ -15,7 +15,7 @@ import SimuladorFrete from '../components/SimuladorFrete'
 import ComparativoMarketplaces from '../components/ComparativoMarketplaces'
 import RegimeTributarioSelector from '../components/RegimeTributarioSelector'
 import HowItWorks from './HowItWorks'
-import { calcularPrecificacao, getFeesParaProduto } from '../utils/pricingLogic'
+import { calcularPrecificacao } from '../utils/pricingLogic'
 import { getCatalogo, getCondicoes, saveProduto, isFreePlan, passou90DiasDesdeAtualizacao, getRegimeTributario, LIMITE_CATALOGO_FREE } from '../utils/storageUtils'
 import { getAliquotaImposto } from '../utils/tributarioUtils'
 
@@ -86,6 +86,7 @@ export default function Landing() {
   const [nomeSalvar, setNomeSalvar] = useState('')
   const [savedFeedback, setSavedFeedback] = useState(false)
   const [customFees, setCustomFees] = useState(query.customFees)
+  const [campanhaShopee, setCampanhaShopee] = useState(false)
   const [customFeeClassico, setCustomFeeClassico] = useState(query.customFees?.classico != null ? (query.customFees.classico * 100).toFixed(1) : '')
   const [customFeePremium, setCustomFeePremium] = useState(query.customFees?.premium != null ? (query.customFees.premium * 100).toFixed(1) : '')
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
@@ -123,8 +124,9 @@ export default function Landing() {
       categoria,
       ...sliders,
       customFees,
+      campanhaShopee: marketplace === 'shopee' && campanhaShopee,
     })
-  }, [costs, marketplace, categoria, sliders, customFees])
+  }, [costs, marketplace, categoria, sliders, customFees, campanhaShopee])
 
   const melhorDado = useMemo(() => {
     const cl = resultados?.classico
@@ -137,9 +139,12 @@ export default function Landing() {
   }, [resultados])
 
   const taxesOutdated = passou90DiasDesdeAtualizacao()
-  const fees = useMemo(() => getFeesParaProduto(marketplace, categoria, getCondicoes(), customFees), [marketplace, categoria, customFees])
-  const totalPctSemMargem =
-    fees.classico + sliders.ads / 100 + sliders.imposto / 100 + sliders.devolucao / 100
+  const totalPctSemMargem = melhorDado
+    ? melhorDado.detalheTaxas.taxaMarketplace
+      + melhorDado.detalheTaxas.taxaTransacao
+      + melhorDado.detalheTaxas.taxaCampanha
+      + sliders.ads / 100 + sliders.imposto / 100 + sliders.devolucao / 100
+    : 0
 
   return (
     <div>
@@ -246,6 +251,21 @@ export default function Landing() {
               <p className="font-semibold">Importante</p>
               <p>As taxas padrão devem ser editadas em Condições Comerciais. Este campo serve apenas para testes ou ajustes específicos.</p>
             </div>
+
+            {marketplace === 'shopee' && (
+              <label className="mt-4 flex items-start gap-2 text-sm text-gray-700 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={campanhaShopee}
+                  onChange={(e) => setCampanhaShopee(e.target.checked)}
+                  className="mt-0.5"
+                />
+                <span>
+                  Participo de campanhas de destaque da Shopee (11.11, Páscoa, etc.)
+                  <span className="block text-xs text-gray-400">Adiciona +2,5% de taxa de campanha ao cálculo, cobrada sobre o preço de venda.</span>
+                </span>
+              </label>
+            )}
           </details>
 
           {/* Passo 3 */}
@@ -268,6 +288,7 @@ export default function Landing() {
               categoria={categoria}
               marketplace={marketplace}
               customFees={customFees}
+              campanhaShopee={campanhaShopee}
             />
           </div>
 
@@ -409,6 +430,7 @@ export default function Landing() {
                         costs,
                         sliders,
                         customFees,
+                        campanhaShopee: marketplace === 'shopee' && campanhaShopee,
                       })
                       trackProductCalculated({ nome: produto.nome, marketplace, precoIdeal: melhorDado?.precoIdeal })
                       setModalSalvar(false)
@@ -436,6 +458,7 @@ export default function Landing() {
                         costs,
                         sliders,
                         customFees,
+                        campanhaShopee: marketplace === 'shopee' && campanhaShopee,
                       })
                       trackProductCalculated({ nome: produto.nome, marketplace, precoIdeal: melhorDado?.precoIdeal })
                       setModalSalvar(false)

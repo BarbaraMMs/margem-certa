@@ -3,7 +3,7 @@ import { Scale, Info } from 'lucide-react'
 import { calcularPrecificacao, formatBRL, formatPct } from '../utils/pricingLogic'
 import { getMarketplaces, getCondicoes } from '../utils/storageUtils'
 
-export default function ComparativoMarketplaces({ costs, sliders, condicoes, categoria, marketplace, customFees }) {
+export default function ComparativoMarketplaces({ costs, sliders, condicoes, categoria, marketplace, customFees, campanhaShopee }) {
   const condicoesAtivas = useMemo(() => condicoes || getCondicoes(), [condicoes])
 
   const linhas = useMemo(() => {
@@ -18,6 +18,7 @@ export default function ComparativoMarketplaces({ costs, sliders, condicoes, cat
           ...sliders,
           condicoes: condicoesAtivas,
           customFees: mkt.id === marketplace ? customFees : null,
+          campanhaShopee: mkt.id === 'shopee' && mkt.id === marketplace && campanhaShopee,
         })
 
         const cl = resultado?.classico
@@ -35,7 +36,7 @@ export default function ComparativoMarketplaces({ costs, sliders, condicoes, cat
       })
       .filter(l => l.melhor != null)
       .sort((a, b) => b.melhor.margemReal - a.melhor.margemReal)
-  }, [costs, sliders, condicoesAtivas, categoria, marketplace, customFees])
+  }, [costs, sliders, condicoesAtivas, categoria, marketplace, customFees, campanhaShopee])
 
   if (!linhas.length) return null
 

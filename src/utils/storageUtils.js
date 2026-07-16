@@ -46,15 +46,12 @@ export const DEFAULT_CONDITIONS = [
   { marketplace: 'mercadolivre', categoria: 'Livros e Revistas',              classico: 0.03, premium: 0.03 },
   { marketplace: 'mercadolivre', categoria: 'Outras categorias',              classico: 0.13, premium: 0.19 },
 
-  // ── Shopee — taxa única por categoria (sem distinção premium) ───────────────
-  { marketplace: 'shopee', categoria: 'Celulares e Acessórios',  classico: 0.05, premium: 0.05 },
-  { marketplace: 'shopee', categoria: 'Eletrônicos',              classico: 0.05, premium: 0.05 },
-  { marketplace: 'shopee', categoria: 'Casa e Decoração',         classico: 0.06, premium: 0.06 },
-  { marketplace: 'shopee', categoria: 'Moda e Acessórios',        classico: 0.07, premium: 0.07 },
-  { marketplace: 'shopee', categoria: 'Beleza e Cuidados',        classico: 0.07, premium: 0.07 },
-  { marketplace: 'shopee', categoria: 'Brinquedos',               classico: 0.06, premium: 0.06 },
-  { marketplace: 'shopee', categoria: 'Esportes e Lazer',         classico: 0.06, premium: 0.06 },
-  { marketplace: 'shopee', categoria: 'Outras categorias',        classico: 0.06, premium: 0.06 },
+  // ── Shopee — a comissão NÃO varia por categoria, só por faixa de preço ──────
+  // A taxa real (comissão + taxa fixa + transação + frete) é calculada
+  // automaticamente por faixa de preço em pricingLogic.js (SHOPEE_TIERS).
+  // Esta linha só existe para manter a Shopee selecionável e serve de
+  // fallback informativo — não é usada no cálculo do preço ideal.
+  { marketplace: 'shopee', categoria: null, classico: 0.14, premium: 0.14 },
 
   // ── Amazon — referral fee por categoria ────────────────────────────────────
   { marketplace: 'amazon', categoria: 'Eletrônicos',         classico: 0.08, premium: 0.08 },
@@ -88,10 +85,20 @@ export const DEFAULT_CONDITIONS = [
 
 // ── Persistência das condições ─────────────────────────────────────────────
 
+/** Migra condições salvas antes da reforma das taxas Shopee 2026: remove as
+ *  antigas linhas por categoria e injeta a linha única usada como fallback. */
+function migrarCondicoesShopee(condicoes) {
+  const temCategoriaAntiga = condicoes.some(r => r.marketplace === 'shopee' && r.categoria)
+  if (!temCategoriaAntiga) return condicoes
+  const semShopee = condicoes.filter(r => r.marketplace !== 'shopee')
+  const shopeeDefault = DEFAULT_CONDITIONS.find(r => r.marketplace === 'shopee')
+  return shopeeDefault ? [...semShopee, shopeeDefault] : semShopee
+}
+
 export function getCondicoes() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) return JSON.parse(raw)
+    if (raw) return migrarCondicoesShopee(JSON.parse(raw))
   } catch { /* ignore */ }
   return DEFAULT_CONDITIONS
 }

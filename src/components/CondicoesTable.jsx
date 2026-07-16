@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { BUILT_IN_LABELS, BUILT_IN_EMOJIS, getCustomLabels, saveCustomLabels } from '../utils/storageUtils'
+import { SHOPEE_TIERS, SHOPEE_TAXA_TRANSACAO_PCT, SHOPEE_TAXA_CAMPANHA_PCT, formatBRL, formatPct } from '../utils/pricingLogic'
 
 function getLabel(key, customLabels) {
   return BUILT_IN_LABELS[key] || customLabels[key] || key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
@@ -172,6 +173,44 @@ export default function CondicoesTable({ condicoes, onChange }) {
       {/* ── Conteúdo da aba ativa ────────────────────────────────────────── */}
       {marketplaces.map(mkt => {
         if (mkt !== activeTab) return null
+
+        if (mkt === 'shopee') {
+          return (
+            <div key={mkt}>
+              <p className="text-sm text-gray-500 mb-3">
+                A Shopee não diferencia taxa por categoria — a comissão e a taxa fixa variam automaticamente por faixa de preço do item, calculadas em tempo real na calculadora.
+              </p>
+              <div className="overflow-x-auto rounded-xl border border-gray-200 mb-4">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
+                    <tr>
+                      <th className="px-4 py-3 text-left">Faixa de preço</th>
+                      <th className="px-4 py-3 text-center">Comissão</th>
+                      <th className="px-4 py-3 text-center">Taxa fixa</th>
+                      <th className="px-4 py-3 text-center">Co-part. frete</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {SHOPEE_TIERS.map(tier => (
+                      <tr key={tier.label}>
+                        <td className="px-4 py-2.5 font-medium text-gray-800">{tier.label}</td>
+                        <td className="px-4 py-2.5 text-center">{formatPct(tier.comissao)}</td>
+                        <td className="px-4 py-2.5 text-center">{formatBRL(tier.taxaFixa)}</td>
+                        <td className="px-4 py-2.5 text-center">{formatBRL(tier.freteCoParticipacao)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-xs text-gray-500 space-y-1">
+                <p>+ Taxa de transação: {formatPct(SHOPEE_TAXA_TRANSACAO_PCT)} sobre toda venda (processamento de pagamento).</p>
+                <p>+ Taxa de campanha (opcional): {formatPct(SHOPEE_TAXA_CAMPANHA_PCT)}, ativada por produto na calculadora quando o seller participa de campanhas de destaque.</p>
+                <p className="text-amber-600 font-medium">⚠️ Esta tabela não é editável aqui — para simular uma condição negociada diferente, use "Configurações avançadas" na calculadora.</p>
+              </div>
+            </div>
+          )
+        }
+
         const rows = condicoes.filter(r => r.marketplace === mkt)
 
         return (

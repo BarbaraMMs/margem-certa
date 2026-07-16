@@ -116,18 +116,38 @@ export default function Resultados() {
 
   function exportCSV() {
     const rows = [
-      ['SKU','Produto','Marketplace','Categoria','Preço Clássico','Margem Clássico','Preço Premium','Margem Premium','Diagnóstico'],
-      ...resultados.map(({ produto: p, calc, diag }) => [
-        p.sku || '',
-        p.nome_produto,
-        MARKETPLACE_LABELS[p.marketplace] || p.marketplace,
-        p.categoria || '',
-        calc.classico?.error ? 'Erro' : (calc.classico?.precoIdeal?.toFixed(2) || ''),
-        calc.classico?.error ? '' : formatPct(calc.classico?.margemReal),
-        calc.premium?.error ? 'Erro' : (calc.premium?.precoIdeal?.toFixed(2) || ''),
-        calc.premium?.error ? '' : formatPct(calc.premium?.margemReal),
-        diag?.titulo || '',
-      ])
+      [
+        'SKU','Produto','Marketplace','Categoria','Faixa de Preço Shopee',
+        'Preço Clássico','Margem Clássico','Preço Premium','Margem Premium',
+        'Comissão (R$)','Taxa Fixa (R$)','Co-part. Frete Grátis (R$)','Taxa de Transação (R$)','Taxa de Campanha (R$)',
+        'Ads (R$)','Imposto (R$)','Devolução (R$)','Margem Desejada (R$)',
+        'Diagnóstico',
+      ],
+      ...resultados.map(({ produto: p, calc, melhor, diag }) => {
+        const dt = melhor?.detalheTaxas
+        const val = pct => melhor && dt ? (pct * melhor.precoIdeal).toFixed(2) : ''
+        return [
+          p.sku || '',
+          p.nome_produto,
+          MARKETPLACE_LABELS[p.marketplace] || p.marketplace,
+          p.categoria || '',
+          melhor?.faixaPrecoShopee || '',
+          calc.classico?.error ? 'Erro' : (calc.classico?.precoIdeal?.toFixed(2) || ''),
+          calc.classico?.error ? '' : formatPct(calc.classico?.margemReal),
+          calc.premium?.error ? 'Erro' : (calc.premium?.precoIdeal?.toFixed(2) || ''),
+          calc.premium?.error ? '' : formatPct(calc.premium?.margemReal),
+          melhor ? melhor.feeEmReais.toFixed(2) : '',
+          dt ? dt.taxaFixaReais.toFixed(2) : '',
+          dt ? dt.freteCoParticipacaoReais.toFixed(2) : '',
+          dt ? val(dt.taxaTransacao) : '',
+          dt ? val(dt.taxaCampanha) : '',
+          dt ? val(dt.taxaAds) : '',
+          dt ? val(dt.taxaImposto) : '',
+          dt ? val(dt.taxaDevolucao) : '',
+          dt ? val(dt.margemDesejada) : '',
+          diag?.titulo || '',
+        ]
+      })
     ]
     const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n')
     const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
