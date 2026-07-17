@@ -3,7 +3,6 @@ import { ClipboardList } from 'lucide-react'
 import { getCondicoes, getMarketplaceLabel, getMarketplaceEmoji, getLastCondicoesAtualizacao } from '../utils/storageUtils'
 import {
   SHOPEE_TIERS,
-  SHOPEE_TAXA_TRANSACAO_PCT,
   SHOPEE_TAXA_CAMPANHA_PCT,
   MARKETPLACES_COM_CLASSICO_PREMIUM,
   formatBRL,
@@ -66,7 +65,6 @@ export default function TabelasVigentes() {
                       <th className="px-4 py-3 text-left">Valor do item</th>
                       <th className="px-4 py-3 text-center">Comissão</th>
                       <th className="px-4 py-3 text-center">Taxa fixa</th>
-                      <th className="px-4 py-3 text-center">Co-part. frete grátis</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -75,14 +73,13 @@ export default function TabelasVigentes() {
                         <td className="px-4 py-2.5 font-medium text-gray-800">{tier.label}</td>
                         <td className="px-4 py-2.5 text-center">{formatPct(tier.comissao)}</td>
                         <td className="px-4 py-2.5 text-center">{formatBRL(tier.taxaFixa)}</td>
-                        <td className="px-4 py-2.5 text-center">{formatBRL(tier.freteCoParticipacao)}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
               <div className="text-xs text-gray-500 space-y-1">
-                <p>+ Taxa de transação: {formatPct(SHOPEE_TAXA_TRANSACAO_PCT)} sobre toda venda (processamento de pagamento).</p>
+                <p>A comissão já contempla a taxa de transação — não há cobrança de processamento de pagamento separada.</p>
                 <p>+ Taxa de campanha (opcional): {formatPct(SHOPEE_TAXA_CAMPANHA_PCT)}, só quando você participa de campanhas de destaque (11.11, Páscoa, etc.).</p>
               </div>
             </div>

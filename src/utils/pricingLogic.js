@@ -45,31 +45,39 @@ export const MARKETPLACES_COM_CLASSICO_PREMIUM = ['mercadolivre']
 const ML_FRETE_FIXO = 6.00
 const ML_LIMIAR    = 79.00
 
+// Taxa de processamento de pagamento via Mercado Pago (recebimento à vista) —
+// incide em toda venda do Mercado Livre, por fora da comissão do anúncio.
+export const ML_TAXA_TRANSACAO_PCT = 0.0499
+
 // ── Shopee Brasil 2026 — comissão + taxa fixa por faixa de preço ───────────
+// Fonte: Política de Comissão oficial da Shopee para vendedores CNPJ (vigente
+// desde 01/03/2026). A comissão já contempla a taxa de transação — não há
+// cobrança de processamento de pagamento separada. A "co-participação de
+// frete grátis" NÃO é regra geral: só se aplica a vendedores que operam com
+// logística própria via Intelipost/API de Frete, com regra de cálculo própria
+// não coberta aqui — por isso fica zerada por padrão.
 // A Shopee não diferencia taxa por categoria de produto: a variação é
 // exclusivamente por faixa de preço do item.
 export const SHOPEE_TIERS = [
-  { min: 0,   max: 79.99,      comissao: 0.20, taxaFixa: 4.00,  freteCoParticipacao: 5.00,  label: 'Até R$79,99' },
-  { min: 80,  max: 99.99,      comissao: 0.14, taxaFixa: 16.00, freteCoParticipacao: 7.50,  label: 'R$80,00 a R$99,99' },
-  { min: 100, max: 199.99,     comissao: 0.14, taxaFixa: 20.00, freteCoParticipacao: 7.50,  label: 'R$100,00 a R$199,99' },
-  { min: 200, max: 499.99,     comissao: 0.14, taxaFixa: 26.00, freteCoParticipacao: 10.00, label: 'R$200,00 a R$499,99' },
-  { min: 500, max: Infinity,   comissao: 0.14, taxaFixa: 28.00, freteCoParticipacao: 10.00, label: 'Acima de R$500,00' },
+  { min: 0,   max: 79.99,      comissao: 0.20, taxaFixa: 4.00,  freteCoParticipacao: 0, label: 'Até R$79,99' },
+  { min: 80,  max: 99.99,      comissao: 0.14, taxaFixa: 16.00, freteCoParticipacao: 0, label: 'R$80,00 a R$99,99' },
+  { min: 100, max: 199.99,     comissao: 0.14, taxaFixa: 20.00, freteCoParticipacao: 0, label: 'R$100,00 a R$199,99' },
+  { min: 200, max: 499.99,     comissao: 0.14, taxaFixa: 26.00, freteCoParticipacao: 0, label: 'R$200,00 a R$499,99' },
+  { min: 500, max: Infinity,   comissao: 0.14, taxaFixa: 26.00, freteCoParticipacao: 0, label: 'Acima de R$500,00' },
 ]
 
-// Taxa de processamento de pagamento — incide em toda venda.
-export const SHOPEE_TAXA_TRANSACAO_PCT = 0.02
 // Opcional: só incide quando o seller participa de campanhas de destaque (11.11, etc.)
 export const SHOPEE_TAXA_CAMPANHA_PCT = 0.025
 
 /**
  * Resolve a faixa de preço da Shopee aplicável, dado o custo fixo (produto + frete
  * absorvido + outros) e os percentuais que não dependem da faixa (ads, imposto,
- * devolução, margem). Como a taxa fixa e a co-participação de frete variam por faixa —
- * e a faixa depende do preço final —, testamos as faixas em ordem crescente e aceitamos
- * a primeira cujo preço resultante realmente cai dentro do próprio intervalo.
+ * devolução, margem). Como a taxa fixa varia por faixa — e a faixa depende do preço
+ * final —, testamos as faixas em ordem crescente e aceitamos a primeira cujo preço
+ * resultante realmente cai dentro do próprio intervalo.
  */
 function resolveShopeeTier({ custoFixoTotalBase, pctSemFee, comissaoOverride, campanhaShopee }) {
-  const extraPct = SHOPEE_TAXA_TRANSACAO_PCT + (campanhaShopee ? SHOPEE_TAXA_CAMPANHA_PCT : 0)
+  const extraPct = campanhaShopee ? SHOPEE_TAXA_CAMPANHA_PCT : 0
   let ultimo = null
 
   for (const tier of SHOPEE_TIERS) {
@@ -88,8 +96,35 @@ function resolveShopeeTier({ custoFixoTotalBase, pctSemFee, comissaoOverride, ca
   return ultimo
 }
 
-function calcPrecoIdeal({ custoFixoTotal, fee, ads, imposto, devolucao, margemAlvo, isMercadoLivre }) {
-  const totalPct = fee + ads / 100 + imposto / 100 + devolucao / 100 + margemAlvo / 100
+/**
+ * Para cada faixa de preço da Shopee, calcula a margem/lucro resultante se o preço de
+ * venda for travado no teto daquela faixa (ou no piso, para a faixa sem teto) — dado o
+ * custo fixo real do produto. Serve para o seller decidir se compensa manter o preço
+ * dentro de uma faixa mais barata (comissão maior, mas taxa fixa bem menor) em vez de
+ * deixar o preço subir naturalmente para a próxima faixa.
+ */
+export function compararFaixasShopee({ custoFixoTotalBase, ads, imposto, devolucao, comissaoOverride, campanhaShopee }) {
+  const extraPct = campanhaShopee ? SHOPEE_TAXA_CAMPANHA_PCT : 0
+  const pctSemFeeSemMargem = ads / 100 + imposto / 100 + devolucao / 100
+
+  return SHOPEE_TIERS.map(tier => {
+    const comissao = Number.isFinite(comissaoOverride) ? comissaoOverride : tier.comissao
+    const totalPct = comissao + extraPct + pctSemFeeSemMargem
+    const preco = tier.max === Infinity ? tier.min : tier.max
+    const custoAjustado = custoFixoTotalBase + tier.taxaFixa + tier.freteCoParticipacao
+
+    if (totalPct >= 1 || preco <= 0) {
+      return { tier, preco, margem: null, lucro: null }
+    }
+
+    const lucro = preco * (1 - totalPct) - custoAjustado
+    const margem = lucro / preco
+    return { tier, preco, margem, lucro }
+  })
+}
+
+function calcPrecoIdeal({ custoFixoTotal, fee, taxaTransacao = 0, ads, imposto, devolucao, margemAlvo, isMercadoLivre }) {
+  const totalPct = fee + taxaTransacao + ads / 100 + imposto / 100 + devolucao / 100 + margemAlvo / 100
 
   if (totalPct >= 1) return { error: 'overflow' }
 
@@ -150,12 +185,13 @@ export function calcularPrecificacao({
       shopeeTier = resolved.tier
     } else {
       fee = fees[tipo]
-      const totalPct = fee + pctSemFee
+      const taxaTransacaoPct = isMercadoLivre ? ML_TAXA_TRANSACAO_PCT : 0
+      const totalPct = fee + taxaTransacaoPct + pctSemFee
       if (totalPct >= 1) {
         resultados[tipo] = { error: 'A soma dos percentuais ultrapassa 100%. Revise os valores.' }
         continue
       }
-      const calc = calcPrecoIdeal({ custoFixoTotal: custoFixoTotalBase, fee, ads, imposto, devolucao, margemAlvo, isMercadoLivre })
+      const calc = calcPrecoIdeal({ custoFixoTotal: custoFixoTotalBase, fee, taxaTransacao: taxaTransacaoPct, ads, imposto, devolucao, margemAlvo, isMercadoLivre })
       if (calc.error) {
         resultados[tipo] = { error: 'A soma dos percentuais ultrapassa 100%. Revise os valores.' }
         continue
@@ -174,7 +210,8 @@ export function calcularPrecificacao({
     const impostoEmReais = (imposto / 100) * preco
     const devolucaoEmReais = (devolucao / 100) * preco
     const margemEmReais = (margemAlvo / 100) * preco
-    const taxaTransacaoEmReais = isShopee ? SHOPEE_TAXA_TRANSACAO_PCT * preco : 0
+    const taxaTransacaoPct = isMercadoLivre ? ML_TAXA_TRANSACAO_PCT : 0
+    const taxaTransacaoEmReais = taxaTransacaoPct * preco
     const taxaCampanhaEmReais = isShopee && campanhaShopee ? SHOPEE_TAXA_CAMPANHA_PCT * preco : 0
 
     const totalDescontos = feeEmReais + taxaTransacaoEmReais + taxaCampanhaEmReais + adsEmReais + impostoEmReais + devolucaoEmReais
@@ -197,12 +234,16 @@ export function calcularPrecificacao({
     }
     if (isShopee) {
       itens.push({ label: 'Taxa fixa por item', valor: shopeeTier.taxaFixa })
-      itens.push({ label: 'Co-participação frete grátis', valor: shopeeTier.freteCoParticipacao })
+      if (shopeeTier.freteCoParticipacao > 0) {
+        itens.push({ label: 'Co-participação frete grátis', valor: shopeeTier.freteCoParticipacao })
+      }
     }
     itens.push({ label: 'Comissão marketplace', valor: feeEmReais })
-    if (isShopee) {
+    if (isMercadoLivre) {
       itens.push({ label: 'Taxa de transação (pagamento)', valor: taxaTransacaoEmReais })
-      if (campanhaShopee) itens.push({ label: 'Taxa de campanha (opcional)', valor: taxaCampanhaEmReais })
+    }
+    if (isShopee && campanhaShopee) {
+      itens.push({ label: 'Taxa de campanha (opcional)', valor: taxaCampanhaEmReais })
     }
     itens.push({ label: 'Investimento em anúncios (Ads)', valor: adsEmReais })
     itens.push({ label: 'Imposto estimado', valor: impostoEmReais })
@@ -227,7 +268,7 @@ export function calcularPrecificacao({
         taxaImposto: imposto / 100,
         taxaDevolucao: devolucao / 100,
         margemDesejada: margemAlvo / 100,
-        taxaTransacao: isShopee ? SHOPEE_TAXA_TRANSACAO_PCT : 0,
+        taxaTransacao: taxaTransacaoPct,
         taxaCampanha: isShopee && campanhaShopee ? SHOPEE_TAXA_CAMPANHA_PCT : 0,
         taxaFixaReais: isShopee ? shopeeTier.taxaFixa : (custoR6Aplicado ? ML_FRETE_FIXO : 0),
         freteCoParticipacaoReais: isShopee ? shopeeTier.freteCoParticipacao : 0,

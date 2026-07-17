@@ -13,6 +13,7 @@ import ScenarioSimulator from '../components/ScenarioSimulator'
 import ExportButton from '../components/ExportButton'
 import SimuladorFrete from '../components/SimuladorFrete'
 import ComparativoMarketplaces from '../components/ComparativoMarketplaces'
+import ComparadorFaixasShopee from '../components/ComparadorFaixasShopee'
 import TabelasVigentes from '../components/TabelasVigentes'
 import HowItWorks from './HowItWorks'
 import { calcularPrecificacao } from '../utils/pricingLogic'
@@ -208,6 +209,21 @@ export default function Landing() {
           <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
             <ResultCards resultados={resultados} marketplace={marketplace} />
           </div>
+
+          {/* Comparador de faixas Shopee (auxiliar do Passo 4, só aparece para Shopee) */}
+          {marketplace === 'shopee' && melhorDado && !melhorDado.error && (
+            <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+              <ComparadorFaixasShopee
+                custoFixoTotalBase={melhorDado.custoFixoTotalBase}
+                ads={sliders.ads}
+                imposto={sliders.imposto}
+                devolucao={sliders.devolucao}
+                customFees={customFees}
+                campanhaShopee={campanhaShopee}
+                faixaAtual={melhorDado.faixaPrecoShopee}
+              />
+            </div>
+          )}
 
           {/* Comparativo entre Marketplaces (auxiliar do Passo 4) */}
           <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">

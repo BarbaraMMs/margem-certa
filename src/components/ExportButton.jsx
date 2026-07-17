@@ -209,7 +209,7 @@ export default function ExportButton({
       doc.setFontSize(8)
       doc.setTextColor(130)
       const explicacao = doc.splitTextToSize(
-        'Todos os marketplaces são calculados para a mesma margem líquida alvo. A diferença no preço ideal vem da taxa aplicada (comissão %) e de custos fixos extras por venda (taxa fixa + frete grátis obrigatório na Shopee, ou frete obrigatório abaixo de R$79 no Mercado Livre).',
+        'Todos os marketplaces são calculados para a mesma margem líquida alvo. A diferença no preço ideal vem da taxa aplicada (comissão %), de custos fixos extras por venda (taxa fixa na Shopee, ou frete obrigatório abaixo de R$79 no Mercado Livre) e do custo de transação: no Mercado Livre incide por fora (Mercado Pago, ~4,99%); na Shopee já vem embutido na comissão.',
         170
       )
       checkPageBreak(explicacao.length * 4.5 + 4)

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { BUILT_IN_LABELS, BUILT_IN_EMOJIS, getCustomLabels, saveCustomLabels } from '../utils/storageUtils'
-import { SHOPEE_TIERS, SHOPEE_TAXA_TRANSACAO_PCT, SHOPEE_TAXA_CAMPANHA_PCT, formatBRL, formatPct } from '../utils/pricingLogic'
+import { SHOPEE_TIERS, SHOPEE_TAXA_CAMPANHA_PCT, formatBRL, formatPct } from '../utils/pricingLogic'
 
 function getLabel(key, customLabels) {
   return BUILT_IN_LABELS[key] || customLabels[key] || key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
@@ -187,7 +187,6 @@ export default function CondicoesTable({ condicoes, onChange }) {
                       <th className="px-4 py-3 text-left">Faixa de preço</th>
                       <th className="px-4 py-3 text-center">Comissão</th>
                       <th className="px-4 py-3 text-center">Taxa fixa</th>
-                      <th className="px-4 py-3 text-center">Co-part. frete</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -196,15 +195,15 @@ export default function CondicoesTable({ condicoes, onChange }) {
                         <td className="px-4 py-2.5 font-medium text-gray-800">{tier.label}</td>
                         <td className="px-4 py-2.5 text-center">{formatPct(tier.comissao)}</td>
                         <td className="px-4 py-2.5 text-center">{formatBRL(tier.taxaFixa)}</td>
-                        <td className="px-4 py-2.5 text-center">{formatBRL(tier.freteCoParticipacao)}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
               <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-xs text-gray-500 space-y-1">
-                <p>+ Taxa de transação: {formatPct(SHOPEE_TAXA_TRANSACAO_PCT)} sobre toda venda (processamento de pagamento).</p>
+                <p>A comissão já contempla a taxa de transação (processamento de pagamento) — não há cobrança separada.</p>
                 <p>+ Taxa de campanha (opcional): {formatPct(SHOPEE_TAXA_CAMPANHA_PCT)}, ativada por produto na calculadora quando o seller participa de campanhas de destaque.</p>
+                <p>Vendedores com logística própria via Intelipost/API de Frete têm uma co-participação adicional no cupom de frete grátis — regra específica não coberta por esta calculadora.</p>
                 <p className="text-amber-600 font-medium">⚠️ Esta tabela não é editável aqui — para simular uma condição negociada diferente, use "Condição comercial própria" no momento de salvar o produto no catálogo.</p>
               </div>
             </div>
