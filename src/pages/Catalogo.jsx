@@ -39,7 +39,6 @@ export default function Catalogo() {
     const p = new URLSearchParams({
       mkt: produto.marketplace,
       custo: produto.costs.custoProduto,
-      emb: produto.costs.custoEmbalagem,
       frete: produto.costs.freteAbsorvido,
       outros: produto.costs.outrosCustos,
       ads: produto.sliders.ads,

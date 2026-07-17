@@ -1,17 +1,42 @@
-import { useState } from 'react'
-import { formatBRL, formatPct } from '../utils/pricingLogic'
+import { useState, Fragment } from 'react'
+import { formatBRL, formatPct, MARKETPLACES_COM_CLASSICO_PREMIUM } from '../utils/pricingLogic'
 
-function ResultCard({ tipo, dados, marketplace }) {
+function DetalhamentoTable({ dados }) {
+  return (
+    <div className="mt-4 rounded-2xl border border-gray-100 bg-gray-50 p-4 text-sm text-gray-700">
+      {dados.faixaPrecoShopee && (
+        <p className="mb-3 text-orange-700 font-medium">
+          Faixa de preço Shopee aplicada: {dados.faixaPrecoShopee}
+        </p>
+      )}
+      <div className="grid grid-cols-[1fr_auto_auto] gap-x-4 gap-y-1.5">
+        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Linha de custo</span>
+        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide text-right">R$</span>
+        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide text-right">%</span>
+        {dados.detalheTaxas.itens.map((item, i) => (
+          <Fragment key={i}>
+            <span className="text-gray-600">{item.label}</span>
+            <span className="font-medium text-gray-800 text-right">{formatBRL(item.valor)}</span>
+            <span className="text-gray-500 text-right">{formatPct(item.valor / dados.precoIdeal)}</span>
+          </Fragment>
+        ))}
+        <span className="font-semibold border-t border-gray-200 pt-2 mt-1">Preço ideal calculado</span>
+        <span className="font-semibold border-t border-gray-200 pt-2 mt-1 text-right">{formatBRL(dados.precoIdeal)}</span>
+        <span className="font-semibold border-t border-gray-200 pt-2 mt-1 text-right">100,0%</span>
+      </div>
+    </div>
+  )
+}
+
+function ResultCard({ titulo, dados, destaque }) {
   const [showDetails, setShowDetails] = useState(false)
 
   if (!dados) return null
 
-  const label = tipo === 'classico' ? 'Clássico' : 'Premium'
-
   if (dados.error) {
     return (
       <div className="flex-1 bg-white rounded-2xl border-2 border-red-200 p-6 shadow-md">
-        <h3 className="text-base font-semibold text-gray-700 mb-2">Anúncio {label}</h3>
+        <h3 className="text-base font-semibold text-gray-700 mb-2">{titulo}</h3>
         <p className="text-sm text-red-500">{dados.error}</p>
       </div>
     )
@@ -19,18 +44,18 @@ function ResultCard({ tipo, dados, marketplace }) {
 
   return (
     <div className={`flex-1 bg-white rounded-2xl border-2 p-6 shadow-md relative transition-all
-      ${dados.melhorOpcao ? 'border-green-400 ring-2 ring-green-100' : 'border-gray-100'}`}>
-      {dados.melhorOpcao && (
+      ${destaque ? 'border-green-400 ring-2 ring-green-100' : 'border-gray-100'}`}>
+      {destaque && (
         <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">
           ✓ Melhor opção
         </span>
       )}
-      <h3 className="text-base font-semibold text-gray-700 mb-4">Anúncio {label}</h3>
+      <h3 className="text-base font-semibold text-gray-700 mb-4">{titulo}</h3>
       <div className="space-y-3">
         <div className="flex flex-col gap-1 py-2 border-b border-gray-100">
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-500">Preço de venda ideal</span>
-            <span className={dados.melhorOpcao ? 'text-5xl font-bold text-green-700' : 'text-xl font-bold text-gray-900'}>{formatBRL(dados.precoIdeal)}</span>
+            <span className={destaque ? 'text-5xl font-bold text-green-700' : 'text-xl font-bold text-gray-900'}>{formatBRL(dados.precoIdeal)}</span>
           </div>
           <p className="text-[11px] text-gray-400">Custo ajustado / (1 - total de taxas)</p>
         </div>
@@ -73,62 +98,31 @@ function ResultCard({ tipo, dados, marketplace }) {
       >
         {showDetails ? 'Ocultar' : 'Como chegamos neste preço'}
       </button>
-      {showDetails && (
-        <div className="mt-4 rounded-2xl border border-gray-100 bg-gray-50 p-4 text-sm text-gray-700">
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span>Taxa marketplace</span>
-              <span>{formatPct(dados.detalheTaxas.taxaMarketplace)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Taxa de anúncio</span>
-              <span>{formatPct(dados.detalheTaxas.taxaAds)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Imposto estimado</span>
-              <span>{formatPct(dados.detalheTaxas.taxaImposto)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Taxa de devolução</span>
-              <span>{formatPct(dados.detalheTaxas.taxaDevolucao)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Margem desejada</span>
-              <span>{formatPct(dados.detalheTaxas.margemDesejada)}</span>
-            </div>
-            {dados.faixaPrecoShopee && (
-              <div className="flex justify-between text-orange-700">
-                <span>Faixa de preço Shopee aplicada</span>
-                <span>{dados.faixaPrecoShopee}</span>
-              </div>
-            )}
-            <div className="flex justify-between font-semibold border-t border-gray-200 pt-2">
-              <span>Preço ideal calculado</span>
-              <span>{formatBRL(dados.precoIdeal)}</span>
-            </div>
-          </div>
-
-          {dados.detalheTaxas?.itens?.length > 0 && (
-            <div className="mt-4 border-t border-gray-200 pt-3">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Detalhamento em R$ (por unidade)</p>
-              <div className="space-y-1.5">
-                {dados.detalheTaxas.itens.map((item, i) => (
-                  <div key={i} className="flex justify-between text-sm">
-                    <span className="text-gray-600">{item.label}</span>
-                    <span className="font-medium text-gray-800">{formatBRL(item.valor)}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+      {showDetails && <DetalhamentoTable dados={dados} />}
     </div>
   )
 }
 
 export default function ResultCards({ resultados, marketplace }) {
   if (!resultados) return null
+
+  const temClassicoPremium = MARKETPLACES_COM_CLASSICO_PREMIUM.includes(marketplace)
+
+  if (!temClassicoPremium) {
+    const unico = resultados.classico?.melhorOpcao ? resultados.classico
+      : resultados.premium?.melhorOpcao ? resultados.premium
+      : resultados.classico || resultados.premium
+
+    return (
+      <div>
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+          <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-brass-100 text-ink-900 text-sm font-bold mr-2">4</span>
+          Resultado
+        </h2>
+        <ResultCard titulo="Preço ideal" dados={unico} destaque={false} />
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -137,8 +131,8 @@ export default function ResultCards({ resultados, marketplace }) {
         Resultado: Clássico vs Premium
       </h2>
       <div className="flex flex-col sm:flex-row gap-4">
-        <ResultCard tipo="classico" dados={resultados.classico} marketplace={marketplace} />
-        <ResultCard tipo="premium" dados={resultados.premium} marketplace={marketplace} />
+        <ResultCard titulo="Anúncio Clássico" dados={resultados.classico} destaque={resultados.classico?.melhorOpcao} />
+        <ResultCard titulo="Anúncio Premium" dados={resultados.premium} destaque={resultados.premium?.melhorOpcao} />
       </div>
     </div>
   )

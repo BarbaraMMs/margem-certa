@@ -1,6 +1,6 @@
 import * as XLSX from 'xlsx'
 
-const MARKETPLACES_VALIDOS = ['mercadolivre', 'shopee', 'amazon', 'magalu', 'americanas']
+const MARKETPLACES_VALIDOS = ['mercadolivre', 'shopee', 'amazon']
 
 const COLUNAS_OBRIGATORIAS = [
   'nome_produto',
@@ -16,7 +16,6 @@ const TEMPLATE_HEADER = [
   'sku',
   'nome_produto',
   'custo_produto',
-  'custo_embalagem',
   'frete_absorvido',
   'outros_custos',
   'marketplace',
@@ -29,9 +28,9 @@ const TEMPLATE_HEADER = [
 
 export function generateTemplate() {
   const exemplo = [
-    'CAM-001,Camiseta Básica,35.00,2.50,8.00,0,mercadolivre,Moda e Acessórios,8,6,1,15',
-    'FON-002,Fone de Ouvido,89.90,3.00,0,0,mercadolivre,Eletrônicos; Áudio e Vídeo,10,6,2,20',
-    'KIT-003,Kit Maquiagem,45.00,4.00,5.00,0,shopee,,5,6,1,18',
+    'CAM-001,Camiseta Básica,35.00,8.00,2.50,mercadolivre,Moda e Acessórios,8,6,1,15',
+    'FON-002,Fone de Ouvido,89.90,0,3.00,mercadolivre,Eletrônicos; Áudio e Vídeo,10,6,2,20',
+    'KIT-003,Kit Maquiagem,45.00,5.00,4.00,shopee,,5,6,1,18',
   ]
   return TEMPLATE_HEADER.join(',') + '\n' + exemplo.join('\n')
 }
@@ -48,7 +47,6 @@ function normalizeRow(obj) {
     sku:              String(obj.sku || '').trim(),
     nome_produto:     String(obj.nome_produto || '').trim(),
     custo_produto:    normNum(obj.custo_produto),
-    custo_embalagem:  normNum(obj.custo_embalagem),
     frete_absorvido:  normNum(obj.frete_absorvido),
     outros_custos:    normNum(obj.outros_custos),
     marketplace:      String(obj.marketplace || '').toLowerCase().trim(),

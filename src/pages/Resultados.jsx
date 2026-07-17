@@ -7,8 +7,6 @@ const MARKETPLACE_LABELS = {
   mercadolivre: 'Mercado Livre',
   shopee: 'Shopee',
   amazon: 'Amazon',
-  magalu: 'Magalu',
-  americanas: 'Americanas',
 }
 
 const FILTROS = ['Todos', 'Saudáveis', 'Atenção', 'Críticos']
@@ -52,7 +50,6 @@ export default function Resultados() {
     return produtos.map(p => {
       const calc = calcularPrecificacao({
         custoProduto: p.custo_produto,
-        custoEmbalagem: p.custo_embalagem,
         freteAbsorvido: p.frete_absorvido,
         outrosCustos: p.outros_custos,
         marketplace: p.marketplace,

@@ -156,7 +156,7 @@ export default function Dashboard() {
             {criticos.map(p => (
               <Link
                 key={p.id}
-                to={`/?mkt=${p.marketplace}&custo=${p.costs.custoProduto}&emb=${p.costs.custoEmbalagem}&frete=${p.costs.freteAbsorvido}&outros=${p.costs.outrosCustos}&ads=${p.sliders.ads}&imp=${p.sliders.imposto}&dev=${p.sliders.devolucao}&margem=${p.sliders.margemAlvo}`}
+                to={`/?mkt=${p.marketplace}&custo=${p.costs.custoProduto}&frete=${p.costs.freteAbsorvido}&outros=${p.costs.outrosCustos}&ads=${p.sliders.ads}&imp=${p.sliders.imposto}&dev=${p.sliders.devolucao}&margem=${p.sliders.margemAlvo}`}
                 className="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg font-medium transition-colors"
               >
                 {p.nome} — {formatPct(p.melhor.margemReal)} → Recalcular
@@ -225,7 +225,7 @@ export default function Dashboard() {
                     </p>
                   </div>
                   <Link
-                    to={`/?mkt=${p.marketplace}&custo=${p.costs.custoProduto}&emb=${p.costs.custoEmbalagem}&frete=${p.costs.freteAbsorvido}&outros=${p.costs.outrosCustos}&ads=${p.sliders.ads}&imp=${p.sliders.imposto}&dev=${p.sliders.devolucao}&margem=${p.sliders.margemAlvo}`}
+                    to={`/?mkt=${p.marketplace}&custo=${p.costs.custoProduto}&frete=${p.costs.freteAbsorvido}&outros=${p.costs.outrosCustos}&ads=${p.sliders.ads}&imp=${p.sliders.imposto}&dev=${p.sliders.devolucao}&margem=${p.sliders.margemAlvo}`}
                     className="text-xs bg-gray-100 hover:bg-brass-100 text-gray-600 hover:text-ink-900 px-3 py-1.5 rounded-lg font-medium transition-colors shrink-0"
                   >
                     Calcular

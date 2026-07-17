@@ -4,12 +4,12 @@ const STEPS = [
   {
     icon: Wallet,
     title: 'Informe seus custos',
-    desc: 'Digite o custo do produto, embalagem, frete e outros gastos fixos. A calculadora usa esses dados para garantir que você nunca venda no prejuízo.',
+    desc: 'Digite o custo do produto, frete e outros gastos fixos. A calculadora usa esses dados para garantir que você nunca venda no prejuízo.',
   },
   {
     icon: ShoppingCart,
     title: 'Escolha o marketplace',
-    desc: 'Selecione onde você quer vender: Mercado Livre, Shopee, Amazon, Magalu ou Americanas. As taxas de cada plataforma já estão incluídas automaticamente.',
+    desc: 'Selecione onde você quer vender: Mercado Livre, Shopee ou Amazon. As taxas de cada plataforma já estão incluídas automaticamente.',
   },
   {
     icon: BarChart3,

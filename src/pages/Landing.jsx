@@ -13,15 +13,12 @@ import ScenarioSimulator from '../components/ScenarioSimulator'
 import ExportButton from '../components/ExportButton'
 import SimuladorFrete from '../components/SimuladorFrete'
 import ComparativoMarketplaces from '../components/ComparativoMarketplaces'
-import RegimeTributarioSelector from '../components/RegimeTributarioSelector'
 import HowItWorks from './HowItWorks'
 import { calcularPrecificacao } from '../utils/pricingLogic'
-import { getCatalogo, getCondicoes, saveProduto, isFreePlan, passou90DiasDesdeAtualizacao, getRegimeTributario, LIMITE_CATALOGO_FREE } from '../utils/storageUtils'
-import { getAliquotaImposto } from '../utils/tributarioUtils'
+import { getCatalogo, getCondicoes, saveProduto, isFreePlan, passou90DiasDesdeAtualizacao, LIMITE_CATALOGO_FREE } from '../utils/storageUtils'
 
 const DEFAULT_COSTS = {
   custoProduto: 35,
-  custoEmbalagem: 3,
   freteAbsorvido: 8,
   outrosCustos: 0,
 }
@@ -48,7 +45,6 @@ function readQueryParams() {
 
   if (p.get('mkt')) marketplace = p.get('mkt')
   if (p.get('custo')) costs.custoProduto = parseFloat(p.get('custo')) || DEFAULT_COSTS.custoProduto
-  if (p.get('emb')) costs.custoEmbalagem = parseFloat(p.get('emb')) || DEFAULT_COSTS.custoEmbalagem
   if (p.get('frete')) costs.freteAbsorvido = parseFloat(p.get('frete')) || DEFAULT_COSTS.freteAbsorvido
   if (p.get('outros')) costs.outrosCustos = parseFloat(p.get('outros')) || DEFAULT_COSTS.outrosCustos
   if (p.get('ads')) sliders.ads = parseFloat(p.get('ads')) || DEFAULT_SLIDERS.ads
@@ -74,10 +70,8 @@ export default function Landing() {
   const [marketplace, setMarketplace] = useState(query.marketplace || 'mercadolivre')
   const [categoria, setCategoria] = useState(null)
   const [costs, setCosts] = useState({ ...DEFAULT_COSTS, ...query.costs })
-  const [regimeTributario, setRegimeTributario] = useState(getRegimeTributario())
   const [sliders, setSliders] = useState({
     ...DEFAULT_SLIDERS,
-    imposto: getAliquotaImposto(getRegimeTributario()) * 100,
     ...query.sliders,
   })
   const [unidades, setUnidades] = useState(50)
@@ -111,11 +105,6 @@ export default function Landing() {
       return () => clearTimeout(timer)
     }
   }, [costs, sliders]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  function handleRegimeChange(regime) {
-    setRegimeTributario(regime)
-    setSliders(s => ({ ...s, imposto: getAliquotaImposto(regime) * 100 }))
-  }
 
   const resultados = useMemo(() => {
     return calcularPrecificacao({
@@ -270,7 +259,6 @@ export default function Landing() {
 
           {/* Passo 3 */}
           <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100 space-y-6">
-            <RegimeTributarioSelector value={regimeTributario} onChange={handleRegimeChange} />
             <VariableSliders values={sliders} onChange={setSliders} />
           </div>
 
@@ -334,7 +322,7 @@ export default function Landing() {
                 </div>
                 <div className="space-y-2">
                   <p className="font-semibold">Custo fixo total</p>
-                  <p className="text-gray-500">Soma de produto, embalagem, frete absorvido e outros custos.</p>
+                  <p className="text-gray-500">Soma de produto, frete absorvido e outros custos.</p>
                 </div>
                 <div className="space-y-2">
                   <p className="font-semibold">Condição própria</p>
@@ -392,6 +380,9 @@ export default function Landing() {
                 costs={costs}
                 sliders={sliders}
                 unidades={unidades}
+                categoria={categoria}
+                customFees={customFees}
+                campanhaShopee={campanhaShopee}
               />
               <div className="mt-3">
                 <button

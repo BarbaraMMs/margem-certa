@@ -72,7 +72,7 @@ export default function VariableSliders({ values, onChange }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <SliderRow label="Investimento em anúncios" id="ads" value={values.ads} onChange={set('ads')} min={0} max={30} />
         <SliderRow
-          label={<>Imposto <FieldHelp text="Percentual estimado de imposto sobre o faturamento. Preenchido automaticamente pelo regime tributário selecionado acima." /></>}
+          label={<>Imposto <FieldHelp text="Digite a alíquota real que você paga sobre o faturamento (MEI, Simples Nacional, Lucro Presumido/Real). Consulte seu contador para o valor exato — a alíquota do Simples Nacional é progressiva conforme o faturamento acumulado." /></>}
           id="imposto"
           value={values.imposto}
           onChange={set('imposto')}

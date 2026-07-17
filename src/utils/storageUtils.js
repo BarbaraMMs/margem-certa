@@ -3,7 +3,6 @@ const MKT_LABELS_KEY = 'margem-certa-mkt-labels'
 const LAST_CONDICOES_UPDATE_KEY = 'margem-certa-condicoes-atualizadas-em'
 const USER_PLAN_KEY = 'margem-certa-plano'
 const CATALOG_KEY = 'margem-certa-catalogo'
-const REGIME_KEY = 'margem-certa-regime'
 
 /** Limite de produtos salvos no catálogo para o plano Free. */
 export const LIMITE_CATALOGO_FREE = 10
@@ -12,16 +11,12 @@ export const BUILT_IN_LABELS = {
   mercadolivre: 'Mercado Livre',
   shopee:       'Shopee',
   amazon:       'Amazon',
-  magalu:       'Magalu',
-  americanas:   'Americanas',
 }
 
 export const BUILT_IN_EMOJIS = {
   mercadolivre: '🛒',
   shopee:       '🟠',
   amazon:       '📦',
-  magalu:       '🛍️',
-  americanas:   '🔴',
 }
 
 export const DEFAULT_CONDITIONS = [
@@ -63,42 +58,31 @@ export const DEFAULT_CONDITIONS = [
   { marketplace: 'amazon', categoria: 'Casa e Cozinha',      classico: 0.12, premium: 0.12 },
   { marketplace: 'amazon', categoria: 'Ferramentas',         classico: 0.12, premium: 0.12 },
   { marketplace: 'amazon', categoria: 'Outras categorias',   classico: 0.15, premium: 0.15 },
-
-  // ── Magalu — estimativa por categoria ─────────────────────────────────────
-  { marketplace: 'magalu', categoria: 'Eletrônicos',         classico: 0.12, premium: 0.12 },
-  { marketplace: 'magalu', categoria: 'Eletrodomésticos',    classico: 0.13, premium: 0.13 },
-  { marketplace: 'magalu', categoria: 'Informática',         classico: 0.12, premium: 0.12 },
-  { marketplace: 'magalu', categoria: 'Moda',                classico: 0.16, premium: 0.16 },
-  { marketplace: 'magalu', categoria: 'Casa e Decoração',    classico: 0.14, premium: 0.14 },
-  { marketplace: 'magalu', categoria: 'Beleza',              classico: 0.14, premium: 0.14 },
-  { marketplace: 'magalu', categoria: 'Outras categorias',   classico: 0.13, premium: 0.13 },
-
-  // ── Americanas — estimativa por categoria ──────────────────────────────────
-  { marketplace: 'americanas', categoria: 'Eletrônicos',         classico: 0.13, premium: 0.13 },
-  { marketplace: 'americanas', categoria: 'Eletrodomésticos',    classico: 0.14, premium: 0.14 },
-  { marketplace: 'americanas', categoria: 'Informática',         classico: 0.13, premium: 0.13 },
-  { marketplace: 'americanas', categoria: 'Moda',                classico: 0.17, premium: 0.17 },
-  { marketplace: 'americanas', categoria: 'Casa e Decoração',    classico: 0.15, premium: 0.15 },
-  { marketplace: 'americanas', categoria: 'Beleza',              classico: 0.15, premium: 0.15 },
-  { marketplace: 'americanas', categoria: 'Outras categorias',   classico: 0.14, premium: 0.14 },
 ]
 
 // ── Persistência das condições ─────────────────────────────────────────────
 
-/** Migra condições salvas antes da reforma das taxas Shopee 2026: remove as
- *  antigas linhas por categoria e injeta a linha única usada como fallback. */
-function migrarCondicoesShopee(condicoes) {
-  const temCategoriaAntiga = condicoes.some(r => r.marketplace === 'shopee' && r.categoria)
-  if (!temCategoriaAntiga) return condicoes
-  const semShopee = condicoes.filter(r => r.marketplace !== 'shopee')
-  const shopeeDefault = DEFAULT_CONDITIONS.find(r => r.marketplace === 'shopee')
-  return shopeeDefault ? [...semShopee, shopeeDefault] : semShopee
+// Marketplaces removidos do projeto — filtrados de condições salvas antigas.
+const MARKETPLACES_DESCONTINUADOS = ['magalu', 'americanas']
+
+/** Migra condições salvas em versões anteriores: remove marketplaces
+ *  descontinuados e as antigas linhas por categoria da Shopee, substituindo
+ *  pela linha única usada como fallback desde a reforma de taxas 2026. */
+function migrarCondicoes(condicoes) {
+  let c = condicoes.filter(r => !MARKETPLACES_DESCONTINUADOS.includes(r.marketplace))
+  const temCategoriaAntigaShopee = c.some(r => r.marketplace === 'shopee' && r.categoria)
+  if (temCategoriaAntigaShopee) {
+    const semShopee = c.filter(r => r.marketplace !== 'shopee')
+    const shopeeDefault = DEFAULT_CONDITIONS.find(r => r.marketplace === 'shopee')
+    c = shopeeDefault ? [...semShopee, shopeeDefault] : semShopee
+  }
+  return c
 }
 
 export function getCondicoes() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) return migrarCondicoesShopee(JSON.parse(raw))
+    if (raw) return migrarCondicoes(JSON.parse(raw))
   } catch { /* ignore */ }
   return DEFAULT_CONDITIONS
 }
@@ -232,18 +216,4 @@ export function saveProduto(produto) {
 export function deleteProduto(id) {
   const filtrado = getCatalogo().filter(p => p.id !== id)
   localStorage.setItem(CATALOG_KEY, JSON.stringify(filtrado))
-}
-
-// ── Regime tributário ──────────────────────────────────────────────────────
-
-export function getRegimeTributario() {
-  try {
-    const raw = localStorage.getItem(REGIME_KEY)
-    if (raw) return raw
-  } catch { /* ignore */ }
-  return 'simples'
-}
-
-export function setRegimeTributario(regime) {
-  localStorage.setItem(REGIME_KEY, regime)
 }

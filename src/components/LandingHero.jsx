@@ -31,7 +31,7 @@ export default function LandingHero() {
         {/* Stats */}
         <div className="flex flex-wrap justify-center gap-8 mt-12 pt-8 border-t border-gray-100 w-full">
           {[
-            { num: '5', label: 'Marketplaces suportados' },
+            { num: '3', label: 'Marketplaces suportados' },
             { num: '100%', label: 'Gratuito no beta' },
             { num: '< 1min', label: 'Para precificar' },
           ].map((s) => (

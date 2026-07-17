@@ -4,8 +4,6 @@ export const FEES = {
   mercadolivre: { classico: 0.13, premium: 0.19 },
   shopee:       { classico: 0.14, premium: 0.14 },
   amazon:       { classico: 0.13, premium: 0.15 },
-  magalu:       { classico: 0.13, premium: 0.16 },
-  americanas:   { classico: 0.14, premium: 0.17 },
 }
 
 export function getFeesParaProduto(marketplace, categoria, condicoes, customFees) {
@@ -14,7 +12,10 @@ export function getFeesParaProduto(marketplace, categoria, condicoes, customFees
     if (c && c.length) {
       const match = c.find(r => r.marketplace === marketplace && r.categoria === categoria)
       if (match) return { classico: match.classico, premium: match.premium }
-      const fallback = c.find(r => r.marketplace === marketplace && !r.categoria)
+      // Categoria não encontrada (comum ao comparar entre marketplaces, já
+      // que cada um tem sua própria lista) — cai na taxa "Outras categorias"
+      // real do marketplace, não em um valor genérico.
+      const fallback = c.find(r => r.marketplace === marketplace && (!r.categoria || r.categoria === 'Outras categorias'))
       if (fallback) return { classico: fallback.classico, premium: fallback.premium }
     }
     return FEES[marketplace] || FEES.mercadolivre
@@ -34,9 +35,12 @@ export const MARKETPLACE_LABELS = {
   mercadolivre: 'Mercado Livre',
   shopee:       'Shopee',
   amazon:       'Amazon',
-  magalu:       'Magalu',
-  americanas:   'Americanas',
 }
+
+// Só o Mercado Livre tem, de fato, dois tipos de anúncio com comissões
+// diferentes (Clássico x Premium). Os demais marketplaces cobram a mesma
+// taxa independente do "tipo" — por isso classico === premium sempre para eles.
+export const MARKETPLACES_COM_CLASSICO_PREMIUM = ['mercadolivre']
 
 const ML_FRETE_FIXO = 6.00
 const ML_LIMIAR    = 79.00
@@ -58,8 +62,8 @@ export const SHOPEE_TAXA_TRANSACAO_PCT = 0.02
 export const SHOPEE_TAXA_CAMPANHA_PCT = 0.025
 
 /**
- * Resolve a faixa de preço da Shopee aplicável, dado o custo fixo (produto + embalagem
- * + frete absorvido + outros) e os percentuais que não dependem da faixa (ads, imposto,
+ * Resolve a faixa de preço da Shopee aplicável, dado o custo fixo (produto + frete
+ * absorvido + outros) e os percentuais que não dependem da faixa (ads, imposto,
  * devolução, margem). Como a taxa fixa e a co-participação de frete variam por faixa —
  * e a faixa depende do preço final —, testamos as faixas em ordem crescente e aceitamos
  * a primeira cujo preço resultante realmente cai dentro do próprio intervalo.
@@ -105,7 +109,6 @@ function calcComFreteML(custoBase, totalPct) {
 
 export function calcularPrecificacao({
   custoProduto,
-  custoEmbalagem,
   freteAbsorvido,
   outrosCustos,
   marketplace,
@@ -120,7 +123,6 @@ export function calcularPrecificacao({
 }) {
   const custoFixoTotalBase =
     (Number(custoProduto) || 0) +
-    (Number(custoEmbalagem) || 0) +
     (Number(freteAbsorvido) || 0) +
     (Number(outrosCustos) || 0)
 
@@ -182,22 +184,30 @@ export function calcularPrecificacao({
     const markupTotal = custoFixoTotalBase > 0 ? (preco - custoFixoTotalBase) / custoFixoTotalBase : 0
     const custoR6Aplicado = isMercadoLivre && custoAjustado > custoFixoTotalBase
 
+    // Lista única e sem repetição de tudo que compõe o preço — da base de
+    // custo até a margem. Cada linha tem o valor em R$; o percentual sobre
+    // o preço final é calculado na tela (valor / precoIdeal).
     const itens = [
-      { label: 'Comissão marketplace', valor: feeEmReais, pct: fee },
+      { label: 'Custo do produto', valor: Number(custoProduto) || 0 },
+      { label: 'Frete absorvido pelo seller', valor: Number(freteAbsorvido) || 0 },
+      { label: 'Outros custos fixos', valor: Number(outrosCustos) || 0 },
     ]
-    if (isShopee) {
-      itens.push({ label: 'Taxa fixa por item', valor: shopeeTier.taxaFixa, pct: null })
-      itens.push({ label: 'Taxa de transação (pagamento)', valor: taxaTransacaoEmReais, pct: SHOPEE_TAXA_TRANSACAO_PCT })
-      itens.push({ label: 'Co-participação frete grátis', valor: shopeeTier.freteCoParticipacao, pct: null })
-      if (campanhaShopee) itens.push({ label: 'Taxa de campanha (opcional)', valor: taxaCampanhaEmReais, pct: SHOPEE_TAXA_CAMPANHA_PCT })
-    }
     if (custoR6Aplicado) {
-      itens.push({ label: 'Frete fixo obrigatório (< R$79)', valor: ML_FRETE_FIXO, pct: null })
+      itens.push({ label: 'Frete fixo obrigatório (< R$79)', valor: ML_FRETE_FIXO })
     }
-    itens.push({ label: 'Investimento em anúncios (Ads)', valor: adsEmReais, pct: ads / 100 })
-    itens.push({ label: 'Imposto estimado', valor: impostoEmReais, pct: imposto / 100 })
-    itens.push({ label: 'Devolução / quebra', valor: devolucaoEmReais, pct: devolucao / 100 })
-    itens.push({ label: 'Margem líquida desejada', valor: margemEmReais, pct: margemAlvo / 100 })
+    if (isShopee) {
+      itens.push({ label: 'Taxa fixa por item', valor: shopeeTier.taxaFixa })
+      itens.push({ label: 'Co-participação frete grátis', valor: shopeeTier.freteCoParticipacao })
+    }
+    itens.push({ label: 'Comissão marketplace', valor: feeEmReais })
+    if (isShopee) {
+      itens.push({ label: 'Taxa de transação (pagamento)', valor: taxaTransacaoEmReais })
+      if (campanhaShopee) itens.push({ label: 'Taxa de campanha (opcional)', valor: taxaCampanhaEmReais })
+    }
+    itens.push({ label: 'Investimento em anúncios (Ads)', valor: adsEmReais })
+    itens.push({ label: 'Imposto estimado', valor: impostoEmReais })
+    itens.push({ label: 'Devolução / quebra', valor: devolucaoEmReais })
+    itens.push({ label: 'Margem líquida desejada', valor: margemEmReais })
 
     resultados[tipo] = {
       precoIdeal: preco,

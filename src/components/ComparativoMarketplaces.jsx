@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Scale, Info } from 'lucide-react'
-import { calcularPrecificacao, formatBRL, formatPct } from '../utils/pricingLogic'
+import { calcularPrecificacao, formatBRL, formatPct, MARKETPLACES_COM_CLASSICO_PREMIUM } from '../utils/pricingLogic'
 import { getMarketplaces, getCondicoes } from '../utils/storageUtils'
 
 export default function ComparativoMarketplaces({ costs, sliders, condicoes, categoria, marketplace, customFees, campanhaShopee }) {
@@ -32,6 +32,9 @@ export default function ComparativoMarketplaces({ costs, sliders, condicoes, cat
         } else if (cl && !cl.error) { melhor = cl; tipo = 'Clássico' }
         else if (pr && !pr.error)   { melhor = pr; tipo = 'Premium'  }
 
+        // Só o Mercado Livre tem, de fato, tipos de anúncio diferentes.
+        if (melhor && !MARKETPLACES_COM_CLASSICO_PREMIUM.includes(mkt.id)) tipo = '—'
+
         return { mkt, melhor, tipo }
       })
       .filter(l => l.melhor != null)
@@ -62,6 +65,8 @@ export default function ComparativoMarketplaces({ costs, sliders, condicoes, cat
             <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
               <th className="text-left px-4 py-3 font-semibold">Marketplace</th>
               <th className="text-left px-4 py-3 font-semibold">Anúncio</th>
+              <th className="text-right px-4 py-3 font-semibold">Taxa aplicada</th>
+              <th className="text-right px-4 py-3 font-semibold">Custos fixos extras</th>
               <th className="text-right px-4 py-3 font-semibold">Preço ideal</th>
               <th className="text-right px-4 py-3 font-semibold">Margem</th>
               <th className="text-right px-4 py-3 font-semibold">Lucro / un.</th>
@@ -70,6 +75,7 @@ export default function ComparativoMarketplaces({ costs, sliders, condicoes, cat
           <tbody className="divide-y divide-gray-100">
             {linhas.map(({ mkt, melhor, tipo }, i) => {
               const isMelhor = melhor.margemReal === melhorMargem && i === 0
+              const custosFixosExtras = (melhor.detalheTaxas.taxaFixaReais || 0) + (melhor.detalheTaxas.freteCoParticipacaoReais || 0)
               return (
                 <tr
                   key={mkt.id}
@@ -80,6 +86,12 @@ export default function ComparativoMarketplaces({ costs, sliders, condicoes, cat
                     {mkt.label}
                   </td>
                   <td className="px-4 py-3 text-gray-500">{tipo}</td>
+                  <td className="px-4 py-3 text-right text-gray-700">
+                    {formatPct(melhor.detalheTaxas.taxaMarketplace)}
+                  </td>
+                  <td className="px-4 py-3 text-right text-gray-700">
+                    {custosFixosExtras > 0 ? formatBRL(custosFixosExtras) : '—'}
+                  </td>
                   <td className="px-4 py-3 text-right font-semibold text-gray-800">
                     {formatBRL(melhor.precoIdeal)}
                   </td>
@@ -122,6 +134,18 @@ export default function ComparativoMarketplaces({ costs, sliders, condicoes, cat
                   <p className="font-medium text-gray-700">{tipo}</p>
                 </div>
                 <div>
+                  <p className="text-gray-400 text-xs">Taxa aplicada</p>
+                  <p className="font-medium text-gray-700">{formatPct(melhor.detalheTaxas.taxaMarketplace)}</p>
+                </div>
+                <div>
+                  <p className="text-gray-400 text-xs">Custos fixos extras</p>
+                  <p className="font-medium text-gray-700">
+                    {((melhor.detalheTaxas.taxaFixaReais || 0) + (melhor.detalheTaxas.freteCoParticipacaoReais || 0)) > 0
+                      ? formatBRL((melhor.detalheTaxas.taxaFixaReais || 0) + (melhor.detalheTaxas.freteCoParticipacaoReais || 0))
+                      : '—'}
+                  </p>
+                </div>
+                <div>
                   <p className="text-gray-400 text-xs">Preço ideal</p>
                   <p className="font-semibold text-gray-800">{formatBRL(melhor.precoIdeal)}</p>
                 </div>
@@ -146,6 +170,13 @@ export default function ComparativoMarketplaces({ costs, sliders, condicoes, cat
       <p className="text-xs text-gray-400 mt-3">
         ★ = melhor margem entre os marketplaces configurados. Taxas baseadas em Condições Comerciais — ajuste em <a href="/configuracoes" className="underline hover:text-gray-600">Condições Comerciais</a>.
       </p>
+
+      <div className="mt-3 rounded-xl bg-gray-50 border border-gray-200 p-3 text-xs text-gray-500 leading-relaxed">
+        <p className="font-medium text-gray-600 mb-1">Por que os preços ideais são tão diferentes entre marketplaces?</p>
+        <p>
+          Todos são calculados para atingir a <strong>mesma margem líquida alvo</strong> — a diferença no preço final vem de três fatores: (1) a <strong>taxa aplicada</strong> (comissão %) muda por marketplace e categoria; (2) alguns marketplaces cobram <strong>custos fixos extras</strong> por venda — taxa fixa e co-participação de frete grátis na Shopee, ou frete obrigatório abaixo de R$79 no Mercado Livre; (3) o marketplace com a taxa/custo fixo mais alto precisa de um preço maior para sobrar a mesma margem no final.
+        </p>
+      </div>
     </div>
   )
 }

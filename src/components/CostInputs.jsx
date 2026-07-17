@@ -59,12 +59,6 @@ export default function CostInputs({ values, onChange }) {
           required
         />
         <MoneyInput
-          label="Custo de embalagem"
-          id="custoEmbalagem"
-          value={values.custoEmbalagem}
-          onChange={set('custoEmbalagem')}
-        />
-        <MoneyInput
           label="Frete absorvido pelo seller"
           id="freteAbsorvido"
           value={values.freteAbsorvido}
@@ -77,6 +71,9 @@ export default function CostInputs({ values, onChange }) {
           onChange={set('outrosCustos')}
         />
       </div>
+      <p className="text-xs text-gray-500 mt-3">
+        Em <strong>Outros custos fixos</strong>, inclua tudo que você gasta por unidade vendida e que ainda não entrou nos campos acima — por exemplo: embalagem, etiqueta, insumos de embalagem (fita, plástico bolha), cartão/nota de agradecimento, brindes, ou qualquer taxa fixa por venda (maquininha, conta digital).
+      </p>
     </div>
   )
 }
