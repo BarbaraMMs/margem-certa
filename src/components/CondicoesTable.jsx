@@ -134,11 +134,11 @@ export default function CondicoesTable({ condicoes, onChange }) {
 
       {/* ── Formulário: novo marketplace ─────────────────────────────────── */}
       {showNewMkt && (
-        <div className="mb-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
-          <p className="text-sm font-semibold text-blue-800 mb-3">🏪 Adicionar marketplace personalizado</p>
+        <div className="mb-6 bg-brass-100/40 border border-brass-100 rounded-xl p-4">
+          <p className="text-sm font-semibold text-brass-700 mb-3">🏪 Adicionar marketplace personalizado</p>
           <div className="flex flex-wrap gap-2 items-end">
             <div>
-              <label className="text-xs text-blue-700 font-medium mb-1 block">
+              <label className="text-xs text-brass-700 font-medium mb-1 block">
                 Nome do marketplace
               </label>
               <input
@@ -146,13 +146,13 @@ export default function CondicoesTable({ condicoes, onChange }) {
                 value={newMktName}
                 onChange={e => { setNewMktName(e.target.value); setNewMktError('') }}
                 placeholder="ex: Shoptime, Via Varejo..."
-                className="border border-blue-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-56"
+                className="border border-brass-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brass-400 w-56"
                 onKeyDown={e => e.key === 'Enter' && addMarketplace()}
               />
             </div>
             <button
               onClick={addMarketplace}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+              className="bg-ink-900 hover:bg-ink-800 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
             >
               Criar
             </button>
@@ -164,7 +164,7 @@ export default function CondicoesTable({ condicoes, onChange }) {
             </button>
           </div>
           {newMktError && <p className="text-red-500 text-xs mt-2">{newMktError}</p>}
-          <p className="text-xs text-blue-600 mt-2">
+          <p className="text-xs text-brass-700 mt-2">
             Após criar, adicione as categorias e taxas na aba que será criada.
           </p>
         </div>
@@ -205,7 +205,7 @@ export default function CondicoesTable({ condicoes, onChange }) {
               <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-xs text-gray-500 space-y-1">
                 <p>+ Taxa de transação: {formatPct(SHOPEE_TAXA_TRANSACAO_PCT)} sobre toda venda (processamento de pagamento).</p>
                 <p>+ Taxa de campanha (opcional): {formatPct(SHOPEE_TAXA_CAMPANHA_PCT)}, ativada por produto na calculadora quando o seller participa de campanhas de destaque.</p>
-                <p className="text-amber-600 font-medium">⚠️ Esta tabela não é editável aqui — para simular uma condição negociada diferente, use "Configurações avançadas" na calculadora.</p>
+                <p className="text-amber-600 font-medium">⚠️ Esta tabela não é editável aqui — para simular uma condição negociada diferente, use "Condição comercial própria" no momento de salvar o produto no catálogo.</p>
               </div>
             </div>
           )

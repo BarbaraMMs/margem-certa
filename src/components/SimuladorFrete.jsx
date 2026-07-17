@@ -54,9 +54,9 @@ const ABSORPCAO_STYLES = {
     icon: AlertTriangle,
   },
   opcional: {
-    bg: 'bg-blue-50',
-    border: 'border-blue-200',
-    text: 'text-blue-700',
+    bg: 'bg-brass-100/40',
+    border: 'border-brass-200',
+    text: 'text-brass-700',
     icon: Circle,
   },
   info: {
@@ -143,12 +143,12 @@ export default function SimuladorFrete({
         <button
           type="button"
           onClick={() => setMostrarExplicacao(v => !v)}
-          className="text-xs text-blue-600 hover:text-blue-800 underline underline-offset-2 flex items-center gap-1"
+          className="text-xs text-brass-700 hover:text-brass-800 underline underline-offset-2 flex items-center gap-1"
         >
           <Info className="w-3.5 h-3.5" strokeWidth={2} /> {mostrarExplicacao ? 'Ocultar explicação' : 'O que é peso cubado?'}
         </button>
         {mostrarExplicacao && (
-          <div className="mt-2 p-3 bg-blue-50 border border-blue-100 rounded-xl text-xs text-blue-800 leading-relaxed">
+          <div className="mt-2 p-3 bg-brass-100/40 border border-brass-100 rounded-xl text-xs text-brass-800 leading-relaxed">
             <p>Transportadoras cobram pelo maior valor entre o peso real e o peso volumétrico (cubado). Um produto leve mas volumoso pode ser cobrado como se pesasse muito mais.</p>
             <p className="mt-1"><strong>Fórmula:</strong> Comprimento × Largura × Altura ÷ 6.000</p>
             <p className="mt-1"><strong>Exemplo:</strong> Caixa de 40×30×20 cm = 4 kg de peso cubado, independente do peso real.</p>
@@ -337,7 +337,7 @@ export default function SimuladorFrete({
                   href={estimativa.linkOficial}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline block"
+                  className="text-brass-700 hover:underline block"
                 >
                   → Ver tabela oficial
                 </a>
@@ -399,7 +399,7 @@ export default function SimuladorFrete({
           href="https://www.mercadolivre.com.br/ajuda/custo-de-envio-para-vendedores_1242"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs text-blue-600 hover:underline mt-1 block"
+          className="text-xs text-brass-700 hover:underline mt-1 block"
         >
           Ver tabela oficial do Mercado Livre →
         </a>

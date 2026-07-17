@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
-import { AlertTriangle, Settings2, Save, Link2, MessageCircle, CheckCircle2, MessageSquare } from 'lucide-react'
+import { AlertTriangle, Save, Link2, MessageCircle, CheckCircle2, MessageSquare, Tag, ChevronDown } from 'lucide-react'
 import LandingHero from '../components/LandingHero'
 import FeedbackSurvey from '../components/FeedbackSurvey'
 import { trackProductCalculated } from '../utils/supabaseUtils'
@@ -13,6 +13,7 @@ import ScenarioSimulator from '../components/ScenarioSimulator'
 import ExportButton from '../components/ExportButton'
 import SimuladorFrete from '../components/SimuladorFrete'
 import ComparativoMarketplaces from '../components/ComparativoMarketplaces'
+import TabelasVigentes from '../components/TabelasVigentes'
 import HowItWorks from './HowItWorks'
 import { calcularPrecificacao } from '../utils/pricingLogic'
 import { getCatalogo, getCondicoes, saveProduto, isFreePlan, passou90DiasDesdeAtualizacao, LIMITE_CATALOGO_FREE } from '../utils/storageUtils'
@@ -168,81 +169,22 @@ export default function Landing() {
             <CostInputs values={costs} onChange={setCosts} />
           </div>
 
-          {/* Simulador de Frete (auxiliar do Passo 2) */}
-          <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
-            <SimuladorFrete
-              marketplace={marketplace}
-              precoIdealClassico={resultados?.classico?.precoIdeal ?? null}
-              precoIdealPremium={resultados?.premium?.precoIdeal ?? null}
-              onAplicarFrete={(valor) => setCosts(c => ({ ...c, freteAbsorvido: valor }))}
-            />
-          </div>
-
-          {/* Condição comercial própria (auxiliar do Passo 2, opcional) */}
-          <details className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
-            <summary className="cursor-pointer flex items-center gap-2 mb-4">
-              <Settings2 className="w-[18px] h-[18px] text-ink-900" strokeWidth={2} />
-              <span className="text-sm font-medium text-gray-600">Configurações avançadas (opcional)</span>
-            </summary>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="flex flex-col gap-2">
-                <label htmlFor="customFeeClassico" className="text-sm font-medium text-gray-700">
-                  Taxa Clássico (%)
-                </label>
-                <input
-                  id="customFeeClassico"
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="0.1"
-                  value={customFeeClassico}
-                  onChange={(e) => {
-                    const next = e.target.value
-                    setCustomFeeClassico(next)
-                    const value = parseFloat(next.replace(',', '.'))
-                    setCustomFees((current) => ({
-                      ...current,
-                      classico: Number.isFinite(value) ? value / 100 : null,
-                    }))
-                  }}
-                  placeholder="Ex: 13"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass-400"
-                />
-                <p className="text-xs text-gray-400">Use apenas como override temporário para o marketplace atual. A página de Condições Comerciais é a fonte principal de taxas padrão.</p>
-              </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="customFeePremium" className="text-sm font-medium text-gray-700">
-                  Taxa Premium (%)
-                </label>
-                <input
-                  id="customFeePremium"
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="0.1"
-                  value={customFeePremium}
-                  onChange={(e) => {
-                    const next = e.target.value
-                    setCustomFeePremium(next)
-                    const value = parseFloat(next.replace(',', '.'))
-                    setCustomFees((current) => ({
-                      ...current,
-                      premium: Number.isFinite(value) ? value / 100 : null,
-                    }))
-                  }}
-                  placeholder="Ex: 18"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass-400"
-                />
-                <p className="text-xs text-gray-400">Se deixado em branco, o app usa a taxa padrão da página de Condições Comerciais.</p>
-              </div>
+          {/* Simulador de Frete (auxiliar do Passo 2, só faz sentido para Mercado Livre) */}
+          {marketplace === 'mercadolivre' && (
+            <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+              <SimuladorFrete
+                marketplace={marketplace}
+                precoIdealClassico={resultados?.classico?.precoIdeal ?? null}
+                precoIdealPremium={resultados?.premium?.precoIdeal ?? null}
+                onAplicarFrete={(valor) => setCosts(c => ({ ...c, freteAbsorvido: valor }))}
+              />
             </div>
-            <div className="mt-3 rounded-2xl bg-brass-100 border border-brass-100 p-3 text-sm text-brass-700">
-              <p className="font-semibold">Importante</p>
-              <p>As taxas padrão devem ser editadas em Condições Comerciais. Este campo serve apenas para testes ou ajustes específicos.</p>
-            </div>
+          )}
 
-            {marketplace === 'shopee' && (
-              <label className="mt-4 flex items-start gap-2 text-sm text-gray-700 cursor-pointer">
+          {/* Campanha Shopee (auxiliar do Passo 2, só aparece para Shopee) */}
+          {marketplace === 'shopee' && (
+            <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+              <label className="flex items-start gap-2 text-sm text-gray-700 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={campanhaShopee}
@@ -254,8 +196,8 @@ export default function Landing() {
                   <span className="block text-xs text-gray-400">Adiciona +2,5% de taxa de campanha ao cálculo, cobrada sobre o preço de venda.</span>
                 </span>
               </label>
-            )}
-          </details>
+            </div>
+          )}
 
           {/* Passo 3 */}
           <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100 space-y-6">
@@ -433,6 +375,88 @@ export default function Landing() {
                   placeholder="Ex: Camiseta P azul — fornecedor X"
                   className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass-400 mb-4"
                 />
+
+                <details className="mb-4 rounded-xl border border-gray-200 px-3 py-2.5 group">
+                  <summary className="cursor-pointer flex items-center justify-between gap-2 text-xs font-medium text-gray-600 list-none">
+                    <span className="flex items-center gap-1.5">
+                      <Tag className="w-3.5 h-3.5 text-brass-600" strokeWidth={2} />
+                      Condição comercial própria para este produto (opcional)
+                    </span>
+                    <ChevronDown className="w-3.5 h-3.5 text-gray-400 transition-transform group-open:rotate-180" strokeWidth={2} />
+                  </summary>
+                  <div className="mt-3 space-y-3">
+                    <p className="text-xs text-gray-400">
+                      Use apenas se você tem um acordo comercial diferente do padrão para este produto específico. A taxa padrão de todos os outros produtos continua vindo de{' '}
+                      <a href="/configuracoes" className="text-brass-600 hover:underline">Condições Comerciais</a>.
+                    </p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor="customFeeClassico" className="block text-xs font-medium text-gray-600 mb-1">
+                          {marketplace === 'mercadolivre' ? 'Taxa Clássico (%)' : 'Taxa (%)'}
+                        </label>
+                        <input
+                          id="customFeeClassico"
+                          type="number"
+                          min="0"
+                          max="100"
+                          step="0.1"
+                          value={customFeeClassico}
+                          onChange={(e) => {
+                            const next = e.target.value
+                            setCustomFeeClassico(next)
+                            const value = parseFloat(next.replace(',', '.'))
+                            const pct = Number.isFinite(value) ? value / 100 : null
+                            // Fora do Mercado Livre não há distinção Clássico/Premium — espelha o mesmo valor nos dois.
+                            if (marketplace !== 'mercadolivre') setCustomFeePremium(next)
+                            setCustomFees((current) => ({
+                              ...current,
+                              classico: pct,
+                              ...(marketplace !== 'mercadolivre' ? { premium: pct } : {}),
+                            }))
+                          }}
+                          placeholder="Ex: 13"
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brass-400"
+                        />
+                      </div>
+                      {marketplace === 'mercadolivre' && (
+                        <div>
+                          <label htmlFor="customFeePremium" className="block text-xs font-medium text-gray-600 mb-1">
+                            Taxa Premium (%)
+                          </label>
+                          <input
+                            id="customFeePremium"
+                            type="number"
+                            min="0"
+                            max="100"
+                            step="0.1"
+                            value={customFeePremium}
+                            onChange={(e) => {
+                              const next = e.target.value
+                              setCustomFeePremium(next)
+                              const value = parseFloat(next.replace(',', '.'))
+                              setCustomFees((current) => ({
+                                ...current,
+                                premium: Number.isFinite(value) ? value / 100 : null,
+                              }))
+                            }}
+                            placeholder="Ex: 18"
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brass-400"
+                          />
+                        </div>
+                      )}
+                    </div>
+                    {(customFeeClassico || customFeePremium) && (
+                      <button
+                        type="button"
+                        onClick={() => { setCustomFeeClassico(''); setCustomFeePremium(''); setCustomFees(null) }}
+                        className="text-xs text-red-500 hover:text-red-700"
+                      >
+                        Limpar condição própria
+                      </button>
+                    )}
+                  </div>
+                </details>
+
                 <div className="flex gap-2">
                   <button
                     onClick={() => {
@@ -518,6 +542,8 @@ export default function Landing() {
 
       {showFeedback && <FeedbackSurvey onClose={() => setShowFeedback(false)} />}
 
+      <TabelasVigentes />
+
       <HowItWorks />
 
       {/* CTA Final */}
@@ -551,7 +577,7 @@ export default function Landing() {
       </section>
 
       {/* Rodapé */}
-      <footer className="bg-gray-900 text-gray-400 py-8 px-6 text-center">
+      <footer className="bg-ink-900 text-ink-100/50 py-8 px-6 text-center">
         <div className="flex items-center justify-center gap-2 mb-2">
           <div className="w-6 h-6 bg-brass-600 rounded flex items-center justify-center">
             <span className="text-ink-950 font-bold text-xs">M</span>

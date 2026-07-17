@@ -32,9 +32,9 @@ export default function VisitorModal({ onClose }) {
       <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
 
         {/* Header gradiente */}
-        <div className="bg-gradient-to-br from-emerald-500 to-teal-600 px-8 py-7 text-white">
+        <div className="bg-gradient-to-br from-ink-900 to-ink-700 px-8 py-7 text-white">
           <div className="flex items-center gap-3 mb-2">
-            <Sparkles className="w-6 h-6" />
+            <Sparkles className="w-6 h-6 text-brass-300" />
             <span className="text-sm font-semibold tracking-wide uppercase opacity-90">
               Acesso à Demo
             </span>
@@ -42,7 +42,7 @@ export default function VisitorModal({ onClose }) {
           <h2 className="text-2xl font-bold leading-tight">
             Bem-vindo ao MargemCerta!
           </h2>
-          <p className="mt-2 text-emerald-50 text-sm leading-relaxed">
+          <p className="mt-2 text-ink-100/70 text-sm leading-relaxed">
             Antes de explorar a calculadora, nos conte quem você é.
             Assim podemos entender melhor como ajudar sellers como você.
           </p>
@@ -60,7 +60,7 @@ export default function VisitorModal({ onClose }) {
               onChange={e => { setName(e.target.value); setError('') }}
               placeholder="Ex.: João Silva"
               className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm
-                         focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent
+                         focus:outline-none focus:ring-2 focus:ring-brass-400 focus:border-transparent
                          placeholder:text-gray-400"
               autoFocus
             />
@@ -77,7 +77,7 @@ export default function VisitorModal({ onClose }) {
               onChange={e => setEmail(e.target.value)}
               placeholder="joao@email.com"
               className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm
-                         focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent
+                         focus:outline-none focus:ring-2 focus:ring-brass-400 focus:border-transparent
                          placeholder:text-gray-400"
             />
           </div>
@@ -97,7 +97,7 @@ export default function VisitorModal({ onClose }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60
+              className="w-full bg-ink-900 hover:bg-ink-800 disabled:opacity-60
                          text-white font-semibold py-3 rounded-xl transition-colors text-sm"
             >
               {loading ? 'Registrando...' : 'Começar a usar a calculadora →'}

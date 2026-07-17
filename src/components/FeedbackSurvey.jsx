@@ -77,7 +77,7 @@ export default function FeedbackSurvey({ onClose }) {
             </button>
             <button
               onClick={() => setStep(1)}
-              className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold
+              className="flex-1 bg-ink-900 hover:bg-ink-800 text-white font-semibold
                          py-2.5 rounded-xl transition-colors text-sm flex items-center justify-center gap-1"
             >
               Próximo <ChevronRight className="w-4 h-4" />
@@ -113,8 +113,8 @@ export default function FeedbackSurvey({ onClose }) {
                   onClick={() => setHelped(opt.value)}
                   className={`w-full text-left px-4 py-3 rounded-xl border-2 text-sm font-medium transition-all
                     ${helped === opt.value
-                      ? 'border-emerald-500 bg-emerald-50 text-emerald-800'
-                      : 'border-gray-200 hover:border-emerald-300 text-gray-700'}`}
+                      ? 'border-ink-900 bg-brass-100/40 text-ink-950'
+                      : 'border-gray-200 hover:border-brass-300 text-gray-700'}`}
                 >
                   {opt.label}
                 </button>
@@ -173,7 +173,7 @@ export default function FeedbackSurvey({ onClose }) {
             <button
               onClick={handleSubmit}
               disabled={loading || (!helped && !rating)}
-              className="flex-1 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50
+              className="flex-1 bg-ink-900 hover:bg-ink-800 disabled:opacity-50
                          text-white font-semibold py-2.5 rounded-xl transition-colors text-sm"
             >
               {loading ? 'Enviando...' : 'Enviar avaliação 🚀'}
@@ -189,7 +189,7 @@ export default function FeedbackSurvey({ onClose }) {
   return (
     <Overlay>
       <div className="px-8 py-12 text-center">
-        <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
+        <CheckCircle2 className="w-16 h-16 text-green-600 mx-auto mb-4" />
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Muito obrigada! 🙏</h2>
         <p className="text-gray-500 text-sm leading-relaxed mb-6">
           Seu feedback é valioso e vai nos ajudar a construir o melhor produto para sellers brasileiros.
@@ -197,7 +197,7 @@ export default function FeedbackSurvey({ onClose }) {
         </p>
         <button
           onClick={onClose}
-          className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold
+          className="bg-ink-900 hover:bg-ink-800 text-white font-semibold
                      px-8 py-3 rounded-xl transition-colors text-sm"
         >
           Continuar explorando
@@ -221,7 +221,7 @@ function Overlay({ children }) {
 
 function Header({ badge, title, subtitle, onClose }) {
   return (
-    <div className="bg-gradient-to-br from-emerald-500 to-teal-600 px-8 py-6 text-white relative">
+    <div className="bg-gradient-to-br from-ink-900 to-ink-700 px-8 py-6 text-white relative">
       <button
         onClick={onClose}
         className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors"
@@ -233,7 +233,7 @@ function Header({ badge, title, subtitle, onClose }) {
         <span className="text-xs font-semibold tracking-wide uppercase opacity-80">{badge}</span>
       </div>
       <h2 className="text-xl font-bold">{title}</h2>
-      <p className="mt-1 text-emerald-50 text-sm">{subtitle}</p>
+      <p className="mt-1 text-ink-100/70 text-sm">{subtitle}</p>
     </div>
   )
 }
@@ -248,7 +248,7 @@ function Textarea({ label, value, onChange, placeholder, rows = 3 }) {
         placeholder={placeholder}
         rows={rows}
         className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm resize-none
-                   focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent
+                   focus:outline-none focus:ring-2 focus:ring-brass-400 focus:border-transparent
                    placeholder:text-gray-400"
       />
     </div>
@@ -262,7 +262,7 @@ function Progress({ current, total }) {
         <div
           key={i}
           className={`h-1.5 flex-1 rounded-full transition-colors ${
-            i < current ? 'bg-emerald-500' : 'bg-gray-200'
+            i < current ? 'bg-brass-600' : 'bg-gray-200'
           }`}
         />
       ))}

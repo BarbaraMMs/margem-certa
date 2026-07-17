@@ -77,7 +77,7 @@ export default function Admin() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-8">
           <div className="flex items-center gap-2 mb-6">
-            <Lock className="w-5 h-5 text-emerald-500" />
+            <Lock className="w-5 h-5 text-brass-600" />
             <h1 className="text-lg font-bold text-gray-800">Painel Admin — MargemCerta</h1>
           </div>
           <form onSubmit={handleLogin} className="space-y-4">
@@ -86,14 +86,14 @@ export default function Admin() {
               value={pass}
               onChange={e => { setPass(e.target.value); setPassErr(false) }}
               placeholder="Senha de acesso"
-              className={`w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400
+              className={`w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brass-400
                 ${passErr ? 'border-red-400' : 'border-gray-200'}`}
               autoFocus
             />
             {passErr && <p className="text-red-500 text-xs">Senha incorreta.</p>}
             <button
               type="submit"
-              className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2.5 rounded-xl text-sm"
+              className="w-full bg-ink-900 hover:bg-ink-800 text-white font-semibold py-2.5 rounded-xl text-sm"
             >
               Entrar
             </button>
@@ -136,7 +136,7 @@ export default function Admin() {
         <button
           onClick={load}
           disabled={loading}
-          className="flex items-center gap-1.5 text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+          className="flex items-center gap-1.5 text-sm text-brass-700 hover:text-brass-800 font-medium"
         >
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           Atualizar
@@ -320,7 +320,7 @@ function Section({ title, count, onExport, children }) {
         {count > 0 && (
           <button
             onClick={onExport}
-            className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-emerald-600 font-medium"
+            className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-brass-700 font-medium"
           >
             <Download className="w-3.5 h-3.5" /> Exportar CSV
           </button>
