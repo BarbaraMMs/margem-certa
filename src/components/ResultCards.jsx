@@ -55,7 +55,7 @@ function ResultCard({ titulo, dados, destaque }) {
         <div className="flex flex-col gap-1 py-2 border-b border-gray-100">
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-500">Preço de venda ideal</span>
-            <span className={destaque ? 'text-5xl font-bold text-green-700' : 'text-xl font-bold text-gray-900'}>{formatBRL(dados.precoIdeal)}</span>
+            <span className={destaque ? 'text-5xl font-black text-ink-900' : 'text-4xl font-black text-ink-900'}>{formatBRL(dados.precoIdeal)}</span>
           </div>
           <p className="text-[11px] text-gray-400">Custo ajustado / (1 - total de taxas)</p>
         </div>
@@ -69,7 +69,7 @@ function ResultCard({ titulo, dados, destaque }) {
         <div className="flex flex-col gap-1">
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-500">Lucro por unidade</span>
-            <span className={`text-sm font-semibold ${dados.lucroPorUnidade >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+            <span className={`text-sm font-semibold ${dados.lucroPorUnidade >= 0 ? 'text-profit' : 'text-red-500'}`}>
               {formatBRL(dados.lucroPorUnidade)}
             </span>
           </div>
@@ -78,7 +78,7 @@ function ResultCard({ titulo, dados, destaque }) {
         <div className="flex flex-col gap-1">
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-500">Margem líquida real</span>
-            <span className={`text-sm font-bold ${dados.margemReal >= 0.05 ? 'text-green-600' : 'text-red-500'}`}>
+            <span className={`text-sm font-bold ${dados.margemReal >= 0.05 ? 'text-profit' : 'text-red-500'}`}>
               {formatPct(dados.margemReal)}
             </span>
           </div>

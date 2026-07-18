@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { ClipboardList } from 'lucide-react'
-import { getCondicoes, getMarketplaceLabel, getMarketplaceEmoji, getLastCondicoesAtualizacao } from '../utils/storageUtils'
+import { getCondicoes, getMarketplaceLabel, getLastCondicoesAtualizacao } from '../utils/storageUtils'
 import {
   SHOPEE_TIERS,
   SHOPEE_TAXA_CAMPANHA_PCT,
@@ -8,6 +8,7 @@ import {
   formatBRL,
   formatPct,
 } from '../utils/pricingLogic'
+import MarketplaceIcon from './MarketplaceIcon'
 
 const MARKETPLACES_FIXOS = ['mercadolivre', 'shopee', 'amazon']
 
@@ -42,13 +43,14 @@ export default function TabelasVigentes() {
               <button
                 key={mkt}
                 onClick={() => setActiveTab(mkt)}
-                className={`px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 -mb-px transition-colors cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 -mb-px transition-colors cursor-pointer ${
                   activeTab === mkt
                     ? 'border-ink-900 text-ink-900 bg-brass-100/40'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                {getMarketplaceEmoji(mkt)} {getMarketplaceLabel(mkt)}
+                <MarketplaceIcon marketplace={mkt} sizePx={18} />
+                {getMarketplaceLabel(mkt)}
               </button>
             ))}
           </div>

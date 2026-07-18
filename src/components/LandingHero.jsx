@@ -1,16 +1,17 @@
-import { CheckCircle2, TrendingUp, ArrowRight } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
+import MarketplaceIcon from './MarketplaceIcon'
 
-const FEATURES = [
-  'Comissão, frete e impostos calculados automaticamente',
-  'Mercado Livre, Shopee e Amazon com taxas atualizadas',
-  'Comparativo entre marketplaces em um clique',
+const OUTROS_MARKETPLACES = ['shopee', 'amazon']
+
+const MOCK_LINES = [
+  { label: 'Custo do produto',      valor: '– R$ 35,00', className: 'text-gray-500' },
+  { label: 'Comissão',              valor: '– R$ 12,24', className: 'text-gray-500' },
+  { label: 'Lucro líquido',         valor: '+ R$ 15,93', className: 'text-green-600 font-semibold' },
 ]
 
-const MOCK_ITENS = [
-  { label: 'Preço de venda', valor: 'R$ 87,40', destaque: true },
-  { label: 'Custo do produto', valor: '– R$ 35,00' },
-  { label: 'Comissão marketplace', valor: '– R$ 12,24' },
-  { label: 'Margem líquida', valor: 'R$ 15,93', positivo: true },
+const COMPARATIVO_MOCK = [
+  { nome: 'Shopee', marketplace: 'shopee', preco: 'R$ 94,20' },
+  { nome: 'Amazon', marketplace: 'amazon', preco: 'R$ 91,10' },
 ]
 
 export default function LandingHero() {
@@ -19,93 +20,109 @@ export default function LandingHero() {
   }
 
   return (
-    <section className="relative overflow-hidden bg-ink-900">
-      {/* Glow de fundo — sutil, mesma paleta do resto do app */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-32 -right-24 w-[32rem] h-[32rem] rounded-full bg-brass-600/10 blur-3xl" />
-      </div>
+    <section className="relative overflow-hidden bg-canvas">
+      <div className="relative max-w-5xl mx-auto px-6 py-14 lg:py-20 grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
 
-      <div className="relative max-w-6xl mx-auto px-6 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
-        {/* Coluna de texto */}
-        <div>
-          <span className="inline-flex items-center gap-1.5 bg-white/10 text-brass-100 text-xs font-semibold px-3.5 py-1.5 rounded-full mb-6 border border-white/10">
-            <TrendingUp className="w-3.5 h-3.5" strokeWidth={2} />
-            Ferramenta de precificação para sellers
-          </span>
+        {/* ——— Texto ——— */}
+        <div className="relative text-center lg:text-left max-w-md mx-auto lg:max-w-none lg:mx-0">
 
+          {/* Headline */}
           <h1
-            className="font-display text-4xl sm:text-5xl font-semibold text-white leading-[1.1] mb-5"
+            className="font-display text-3xl sm:text-4xl font-semibold text-ink-950 leading-[1.15] mb-4"
             style={{ textWrap: 'balance' }}
           >
-            Preço ideal e margem real, calculados em segundos
+            Precifique certo.<br />Lucre de verdade.
           </h1>
 
-          <p className="text-lg text-ink-100/70 mb-8 max-w-md leading-relaxed">
-            Informe seus custos e veja quanto cobrar em cada marketplace para não vender no prejuízo — sem planilha, sem chute.
+          {/* Subtítulo */}
+          <p className="text-gray-500 text-base mb-8 max-w-sm mx-auto lg:mx-0 leading-relaxed">
+            Veja o preço ideal em cada marketplace em segundos.
           </p>
 
-          <ul className="space-y-2.5 mb-9">
-            {FEATURES.map(f => (
-              <li key={f} className="flex items-start gap-2 text-sm text-ink-100/80">
-                <CheckCircle2 className="w-4 h-4 text-brass-100 shrink-0 mt-0.5" strokeWidth={2} />
-                {f}
-              </li>
-            ))}
-          </ul>
-
-          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-            <button
-              onClick={scrollToCalc}
-              className="group flex items-center gap-2 bg-brass-600 hover:bg-brass-700 text-ink-950 font-semibold px-8 py-3.5 rounded-xl text-base transition-colors shadow-lg shadow-black/20 cursor-pointer"
-            >
-              Calcular meu preço agora
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" strokeWidth={2.5} />
-            </button>
-            <span className="text-sm text-ink-100/50">Gratuito, sem cadastro</span>
-          </div>
+          {/* CTA */}
+          <button
+            onClick={scrollToCalc}
+            className="group inline-flex items-center gap-2 bg-ink-900 hover:bg-ink-800 text-white font-semibold px-8 py-4 rounded-xl text-base transition-colors shadow-md shadow-black/10 cursor-pointer"
+          >
+            Calcular meu preço agora
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" strokeWidth={2.5} />
+          </button>
         </div>
 
-        {/* Coluna visual — preview do resultado */}
+        {/* ——— Cards lado a lado: resultado + comparativo ——— */}
         <div className="relative">
-          <div className="absolute -inset-4 bg-white/5 rounded-3xl blur-2xl" />
-          <div className="relative bg-white rounded-2xl shadow-2xl shadow-black/30 border border-white/10 p-6">
-            <div className="flex items-center justify-between mb-5">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Preço ideal calculado</p>
-              <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-[11px] font-semibold px-2.5 py-1 rounded-full">
-                Margem 18,2%
-              </span>
-            </div>
+          {/* Sombra projetada atrás dos cards */}
+          <div className="absolute -inset-4 bg-brass-100/30 rounded-3xl blur-2xl pointer-events-none" />
 
-            <div className="space-y-0">
-              {MOCK_ITENS.map((item, i) => (
-                <div
-                  key={item.label}
-                  className={`flex items-center justify-between py-2.5 ${i > 0 ? 'border-t border-gray-100' : ''}`}
-                >
-                  <span className={`text-sm ${item.destaque ? 'font-semibold text-gray-800' : 'text-gray-500'}`}>
-                    {item.label}
-                  </span>
-                  <span
-                    className={`text-sm font-semibold ${
-                      item.destaque ? 'text-ink-900 text-base' : item.positivo ? 'text-green-600' : 'text-gray-600'
-                    }`}
-                  >
-                    {item.valor}
-                  </span>
+          <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+            {/* Card 1 — Preço ideal */}
+            <div className="h-full flex flex-col bg-white rounded-2xl shadow-xl shadow-black/10 border border-gray-100 overflow-hidden">
+              <div className="px-5 pt-5 pb-3 border-b border-gray-100">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Preço ideal</p>
+                  <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 border border-green-100 text-[10px] font-semibold px-2 py-0.5 rounded-full">18,2%</span>
                 </div>
-              ))}
-            </div>
-
-            <div className="flex items-center justify-between mt-5 pt-4 border-t border-gray-100">
-              <span className="text-xs text-gray-400">Comparar em</span>
-              <div className="flex items-center gap-1.5">
-                <span className="w-7 h-7 rounded-full bg-brass-100 flex items-center justify-center text-sm" title="Mercado Livre">🛒</span>
-                <span className="w-7 h-7 rounded-full bg-brass-100 flex items-center justify-center text-sm" title="Shopee">🟠</span>
-                <span className="w-7 h-7 rounded-full bg-brass-100 flex items-center justify-center text-sm" title="Amazon">📦</span>
+                <div className="text-center py-2">
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <MarketplaceIcon marketplace="mercadolivre" sizePx={14} />
+                    <p className="text-[10px] text-gray-400 font-medium">Mercado Livre</p>
+                  </div>
+                  <p className="font-display text-3xl font-bold text-ink-950 leading-none">R$ 87,40</p>
+                </div>
+              </div>
+              <div className="px-5 py-3 space-y-2 flex-1">
+                {MOCK_LINES.map((item) => (
+                  <div key={item.label} className="flex items-center justify-between text-xs">
+                    <span className="text-gray-400">{item.label}</span>
+                    <span className={item.className}>{item.valor}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+                <span className="text-[10px] text-gray-400 font-medium">Comparar em</span>
+                <div className="flex items-center gap-1.5">
+                  {OUTROS_MARKETPLACES.map((mkt) => (
+                    <MarketplaceIcon key={mkt} marketplace={mkt} sizePx={22} />
+                  ))}
+                </div>
               </div>
             </div>
+
+            {/* Card 2 — Comparativo entre marketplaces */}
+            <div className="h-full flex flex-col bg-white rounded-2xl shadow-xl shadow-black/10 border border-gray-100 overflow-hidden">
+              <div className="px-5 pt-5 pb-3 border-b border-gray-100">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Comparativo</p>
+                  <span className="inline-flex items-center gap-1 bg-brass-50 text-brass-700 border border-brass-100 text-[10px] font-semibold px-2 py-0.5 rounded-full">3 canais</span>
+                </div>
+                <div className="text-center py-2">
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <MarketplaceIcon marketplace="mercadolivre" sizePx={14} />
+                    <p className="text-[10px] text-gray-400 font-medium">Melhor opção</p>
+                  </div>
+                  <p className="font-display text-3xl font-bold text-ink-950 leading-none">R$ 87,40</p>
+                </div>
+              </div>
+              <div className="px-5 py-3 space-y-2.5 flex-1">
+                {COMPARATIVO_MOCK.map((item) => (
+                  <div key={item.nome} className="flex items-center justify-between text-xs">
+                    <span className="text-gray-400 flex items-center gap-1.5">
+                      <MarketplaceIcon marketplace={item.marketplace} sizePx={16} />
+                      {item.nome}
+                    </span>
+                    <span className="text-gray-600 font-medium">{item.preco}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="px-5 py-3 bg-gray-50 border-t border-gray-100">
+                <span className="text-[10px] text-gray-400 font-medium">Mesma margem, preço diferente por canal</span>
+              </div>
+            </div>
+
           </div>
         </div>
+
       </div>
     </section>
   )

@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { Scale, Info } from 'lucide-react'
 import { calcularPrecificacao, formatBRL, formatPct, MARKETPLACES_COM_CLASSICO_PREMIUM } from '../utils/pricingLogic'
 import { getMarketplaces, getCondicoes } from '../utils/storageUtils'
+import MarketplaceIcon from './MarketplaceIcon'
 
 export default function ComparativoMarketplaces({ costs, sliders, condicoes, categoria, marketplace, customFees, campanhaShopee }) {
   const condicoesAtivas = useMemo(() => condicoes || getCondicoes(), [condicoes])
@@ -84,8 +85,10 @@ export default function ComparativoMarketplaces({ costs, sliders, condicoes, cat
                   className={`transition-colors ${isMelhor ? 'bg-green-50' : 'bg-white hover:bg-gray-50'}`}
                 >
                   <td className="px-4 py-3 font-medium text-gray-800">
-                    <span className="mr-2">{mkt.emoji}</span>
-                    {mkt.label}
+                    <span className="inline-flex items-center gap-2">
+                      <MarketplaceIcon marketplace={mkt.id} sizePx={18} />
+                      {mkt.label}
+                    </span>
                   </td>
                   <td className="px-4 py-3 text-gray-500">{tipo}</td>
                   <td className="px-4 py-3 text-right text-gray-700">
@@ -128,8 +131,9 @@ export default function ComparativoMarketplaces({ costs, sliders, condicoes, cat
               className={`rounded-xl border p-4 ${isMelhor ? 'border-green-300 bg-green-50' : 'border-gray-200 bg-white'}`}
             >
               <div className="flex justify-between items-start mb-2">
-                <span className="font-semibold text-gray-800">
-                  {mkt.emoji} {mkt.label}
+                <span className="font-semibold text-gray-800 inline-flex items-center gap-2">
+                  <MarketplaceIcon marketplace={mkt.id} sizePx={18} />
+                  {mkt.label}
                 </span>
                 {isMelhor && (
                   <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-semibold">★ Melhor</span>

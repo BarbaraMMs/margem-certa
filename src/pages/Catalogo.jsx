@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { PackageOpen, Pencil, Trash2, Lock } from 'lucide-react'
 import { getCatalogo, deleteProduto, saveProduto, isFreePlan, LIMITE_CATALOGO_FREE } from '../utils/storageUtils'
 import { calcularMelhorOferta, formatBRL, formatPct } from '../utils/pricingLogic'
-import { getMarketplaceEmoji, getMarketplaceLabel } from '../utils/storageUtils'
+import { getMarketplaceLabel } from '../utils/storageUtils'
+import MarketplaceIcon from '../components/MarketplaceIcon'
 import { exportarCatalogoXLSX } from '../utils/exportUtils'
 import ProGateModal from '../components/ProGateModal'
 
@@ -135,7 +136,6 @@ export default function Catalogo() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {catalogo.map(produto => {
               const melhor = calcularMelhorOferta(produto)
-              const emoji = getMarketplaceEmoji(produto.marketplace)
               const label = getMarketplaceLabel(produto.marketplace)
               const estaEditando = editandoId === produto.id
               const estaConfirmando = confirmandoId === produto.id
@@ -184,8 +184,9 @@ export default function Catalogo() {
                     <p className="text-xs text-red-400">Erro ao calcular</p>
                   )}
 
-                  <p className="text-xs text-gray-400">
-                    {emoji} {label}
+                  <p className="text-xs text-gray-400 flex items-center gap-1.5">
+                    <MarketplaceIcon marketplace={produto.marketplace} sizePx={14} />
+                    {label}
                     {produto.categoria ? ` · ${produto.categoria}` : ''}
                   </p>
                   <p className="text-xs text-gray-400">Salvo em {formatData(produto.criadoEm || produto.atualizadoEm)}</p>

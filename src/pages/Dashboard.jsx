@@ -1,8 +1,9 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { BarChart3, Package, Star, AlertCircle, PackageOpen } from 'lucide-react'
-import { getCatalogo, getMarketplaceEmoji, getMarketplaceLabel } from '../utils/storageUtils'
+import { getCatalogo, getMarketplaceLabel } from '../utils/storageUtils'
 import { calcularMelhorOferta, formatBRL, formatPct } from '../utils/pricingLogic'
+import MarketplaceIcon from '../components/MarketplaceIcon'
 
 function SummaryCard({ icon: Icon, label, value, sub, cor = 'gray' }) {
   const cores = {
@@ -21,7 +22,7 @@ function SummaryCard({ icon: Icon, label, value, sub, cor = 'gray' }) {
   )
 }
 
-function BarraHorizontal({ label, emoji, margem, maxMargem }) {
+function BarraHorizontal({ label, marketplace, margem, maxMargem }) {
   const pct = maxMargem > 0 ? (margem / maxMargem) * 100 : 0
   const cor = margem >= 0.15
     ? 'bg-green-500'
@@ -32,8 +33,9 @@ function BarraHorizontal({ label, emoji, margem, maxMargem }) {
 
   return (
     <div className="flex items-center gap-3">
-      <div className="w-32 shrink-0 text-sm text-gray-700 truncate">
-        <span className="mr-1">{emoji}</span>{label}
+      <div className="w-32 shrink-0 text-sm text-gray-700 truncate flex items-center gap-1.5">
+        <MarketplaceIcon marketplace={marketplace} sizePx={16} />
+        {label}
       </div>
       <div className="flex-1 bg-gray-100 rounded-full h-4 overflow-hidden">
         <div
@@ -178,7 +180,7 @@ export default function Dashboard() {
               <div key={r.id}>
                 <BarraHorizontal
                   label={getMarketplaceLabel(r.id)}
-                  emoji={getMarketplaceEmoji(r.id)}
+                  marketplace={r.id}
                   margem={r.media}
                   maxMargem={maxMargem}
                 />
@@ -213,8 +215,9 @@ export default function Dashboard() {
                 <div key={p.id} className={`flex items-center gap-4 px-6 py-3 ${isCritico ? 'bg-red-50' : ''}`}>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-800 truncate">{p.nome || 'Produto sem nome'}</p>
-                    <p className="text-xs text-gray-400">
-                      {getMarketplaceEmoji(p.marketplace)} {getMarketplaceLabel(p.marketplace)}
+                    <p className="text-xs text-gray-400 flex items-center gap-1.5">
+                      <MarketplaceIcon marketplace={p.marketplace} sizePx={14} />
+                      {getMarketplaceLabel(p.marketplace)}
                       {p.categoria ? ` · ${p.categoria}` : ''}
                     </p>
                   </div>

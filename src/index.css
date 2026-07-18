@@ -20,7 +20,10 @@
   --color-brass-100: #F3E8D3;
   --color-brass-50:  #F9F3E9;
 
-  --color-canvas: #F7F5F2;
+  --color-canvas: #FBFAF8;
+
+  /* verde de lucro/positivo — definido como parte do sistema, não o verde padrão do Tailwind */
+  --color-profit: #16A34A;
 
   /* neutros levemente quentes, no lugar do cinza puro padrão do Tailwind */
   --color-gray-50: #F7F6F4;

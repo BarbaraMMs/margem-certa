@@ -1,13 +1,10 @@
 import { useState, useMemo } from 'react'
-import { BUILT_IN_LABELS, BUILT_IN_EMOJIS, getCustomLabels, saveCustomLabels } from '../utils/storageUtils'
+import { BUILT_IN_LABELS, getCustomLabels, saveCustomLabels } from '../utils/storageUtils'
 import { SHOPEE_TIERS, SHOPEE_TAXA_CAMPANHA_PCT, formatBRL, formatPct } from '../utils/pricingLogic'
+import MarketplaceIcon from './MarketplaceIcon'
 
 function getLabel(key, customLabels) {
   return BUILT_IN_LABELS[key] || customLabels[key] || key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
-}
-
-function getEmoji(key) {
-  return BUILT_IN_EMOJIS[key] || '🏪'
 }
 
 const PctInput = ({ value, onChange }) => (
@@ -114,13 +111,14 @@ export default function CondicoesTable({ condicoes, onChange }) {
           <button
             key={mkt}
             onClick={() => setActiveTab(mkt)}
-            className={`px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 -mb-px transition-colors ${
+            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 -mb-px transition-colors ${
               activeTab === mkt
                 ? 'border-ink-900 text-ink-900 bg-brass-100/40'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
             }`}
           >
-            {getEmoji(mkt)} {getLabel(mkt, customLabels)}
+            <MarketplaceIcon marketplace={mkt} sizePx={18} />
+            {getLabel(mkt, customLabels)}
           </button>
         ))}
         <button

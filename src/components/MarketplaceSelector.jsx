@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { getCondicoes, getMarketplaces, getCategoriasFor } from '../utils/storageUtils'
+import MarketplaceIcon from './MarketplaceIcon'
 
 export default function MarketplaceSelector({ value, onChange, categoria, onCategoriaChange }) {
   const condicoes = useMemo(() => getCondicoes(), [])
@@ -38,7 +39,7 @@ export default function MarketplaceSelector({ value, onChange, categoria, onCate
               }`}
               aria-pressed={selected}
             >
-              <span className="text-base">{mkt.emoji}</span>
+              <MarketplaceIcon marketplace={mkt.id} sizePx={20} />
               {mkt.label}
             </button>
           )

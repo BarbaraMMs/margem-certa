@@ -88,6 +88,29 @@ export default function Landing() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [showGlossary, setShowGlossary] = useState(false)
   const [showFeedback, setShowFeedback] = useState(false)
+  const [activeStep, setActiveStep] = useState(1)
+  const step1Ref = useRef(null)
+  const step2Ref = useRef(null)
+  const step3Ref = useRef(null)
+  const step4Ref = useRef(null)
+
+  // Observa em qual dos 4 passos principais o seller está durante o scroll,
+  // pra alimentar a barra de progresso sticky (reduz a sensação de formulário sem fim).
+  useEffect(() => {
+    const steps = [step1Ref, step2Ref, step3Ref, step4Ref]
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          const idx = steps.findIndex((ref) => ref.current === entry.target)
+          if (idx !== -1) setActiveStep(idx + 1)
+        })
+      },
+      { rootMargin: '-45% 0px -45% 0px', threshold: 0 }
+    )
+    steps.forEach((ref) => ref.current && observer.observe(ref.current))
+    return () => observer.disconnect()
+  }, [marketplace])
 
   // Rastreia quando o usuário interagiu com a calculadora (mudou custos pelo menos 1x)
   const interactionCount = useRef(0)
@@ -155,8 +178,22 @@ export default function Landing() {
               <p><strong>Atenção:</strong> as taxas de marketplace podem ter mudado. Revise suas configurações em "Condições Comerciais" para manter os cálculos precisos.</p>
             </div>
           )}
+          {/* Barra de progresso sticky — acompanha os 4 passos até o resultado */}
+          <div className="sticky top-14 md:top-3 z-20 -mx-4 px-4 py-2 bg-canvas/95 backdrop-blur">
+            <div className="flex items-center justify-between text-xs font-semibold text-gray-500 mb-1.5">
+              <span>Passo {activeStep} de 4 {activeStep < 4 ? 'para ver seu resultado' : '· Resultado pronto ✓'}</span>
+              <span>{Math.round((activeStep / 4) * 100)}%</span>
+            </div>
+            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-ink-900 to-brass-600 rounded-full transition-all duration-300"
+                style={{ width: `${(activeStep / 4) * 100}%` }}
+              />
+            </div>
+          </div>
+
           {/* Passo 1 */}
-          <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+          <div ref={step1Ref} className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
             <MarketplaceSelector
               value={marketplace}
               onChange={setMarketplace}
@@ -166,7 +203,7 @@ export default function Landing() {
           </div>
 
           {/* Passo 2 */}
-          <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+          <div ref={step2Ref} className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
             <CostInputs values={costs} onChange={setCosts} />
           </div>
 
@@ -201,12 +238,12 @@ export default function Landing() {
           )}
 
           {/* Passo 3 */}
-          <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100 space-y-6">
+          <div ref={step3Ref} className="bg-white rounded-2xl shadow-md p-6 border border-gray-100 space-y-6">
             <VariableSliders values={sliders} onChange={setSliders} />
           </div>
 
           {/* Passo 4 */}
-          <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+          <div ref={step4Ref} className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
             <ResultCards resultados={resultados} marketplace={marketplace} />
           </div>
 
@@ -249,7 +286,7 @@ export default function Landing() {
                 onClick={() => setShowGlossary((prev) => !prev)}
                 className="text-sm font-semibold text-brass-600 hover:text-brass-700"
               >
-                {showGlossary ? 'Ocultar' : 'Mostrar'}
+                {showGlossary ? 'Fechar ↑' : 'Ver termos →'}
               </button>
             </div>
             {showGlossary ? (
@@ -292,35 +329,40 @@ export default function Landing() {
             )}
           </div>
 
-          {/* Passo 5 — Diagnóstico */}
+          {/* Passos 5–7 — análise avançada, colapsada por padrão pra não parecer um formulário sem fim */}
           {melhorDado && (
-            <div>
-              <h2 className="text-lg font-semibold text-gray-800 mb-3">
-                <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-brass-100 text-ink-900 text-sm font-bold mr-2">5</span>
-                Diagnóstico automático
-              </h2>
-              <Diagnosis margemReal={melhorDado.margemReal} margemAlvo={sliders.margemAlvo} />
-            </div>
-          )}
+            <details className="group">
+              <summary className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-brass-600 hover:text-brass-700 py-2 list-none [&::-webkit-details-marker]:hidden">
+                <ChevronDown className="w-4 h-4 group-open:rotate-180 transition-transform" strokeWidth={2} />
+                Análise avançada — diagnóstico, projeção de volume e simulador de cenários
+              </summary>
+              <div className="space-y-8 mt-4">
+                {/* Passo 5 — Diagnóstico */}
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-800 mb-3">
+                    <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-brass-100 text-ink-900 text-sm font-bold mr-2">5</span>
+                    Diagnóstico automático
+                  </h2>
+                  <Diagnosis margemReal={melhorDado.margemReal} margemAlvo={sliders.margemAlvo} />
+                </div>
 
-          {/* Passo 6 */}
-          {melhorDado && (
-            <VolumeProjection
-              lucroPorUnidade={melhorDado.lucroPorUnidade}
-              precoIdeal={melhorDado.precoIdeal}
-              onUnidadesChange={setUnidades}
-            />
-          )}
+                {/* Passo 6 */}
+                <VolumeProjection
+                  lucroPorUnidade={melhorDado.lucroPorUnidade}
+                  precoIdeal={melhorDado.precoIdeal}
+                  onUnidadesChange={setUnidades}
+                />
 
-          {/* Passo 7 */}
-          {melhorDado && (
-            <ScenarioSimulator
-              precoIdeal={melhorDado.precoIdeal}
-              lucroPorUnidade={melhorDado.lucroPorUnidade}
-              custoFixoTotal={melhorDado.custoFixoTotal}
-              totalPctSemMargem={totalPctSemMargem}
-              unidades={unidades}
-            />
+                {/* Passo 7 */}
+                <ScenarioSimulator
+                  precoIdeal={melhorDado.precoIdeal}
+                  lucroPorUnidade={melhorDado.lucroPorUnidade}
+                  custoFixoTotal={melhorDado.custoFixoTotal}
+                  totalPctSemMargem={totalPctSemMargem}
+                  unidades={unidades}
+                />
+              </div>
+            </details>
           )}
 
           {/* Export */}
@@ -529,9 +571,9 @@ export default function Landing() {
               O plano gratuito permite até 10 produtos no catálogo. Para salvar mais produtos e usar recursos avançados, atualize para o Pro.
             </p>
             <div className="space-y-3">
-              <div className="rounded-2xl bg-brass-100 border border-brass-100 p-4 text-sm text-brass-700">
+              <div className="rounded-2xl bg-ink-900 p-4 text-sm text-white">
                 <p className="font-semibold">Benefícios do Pro</p>
-                <ul className="mt-2 list-disc list-inside space-y-1 text-sm text-brass-700">
+                <ul className="mt-2 list-disc list-inside space-y-1 text-sm text-ink-100">
                   <li>Salvar mais de 10 produtos</li>
                   <li>Exportar catálogo .xlsx</li>
                   <li>Condição comercial própria por produto</li>
@@ -593,7 +635,7 @@ export default function Landing() {
       </section>
 
       {/* Rodapé */}
-      <footer className="bg-ink-900 text-ink-100/50 py-8 px-6 text-center">
+      <footer className="bg-ink-900 border-t border-ink-700 text-ink-100/50 py-8 px-6 text-center">
         <div className="flex items-center justify-center gap-2 mb-2">
           <div className="w-6 h-6 bg-brass-600 rounded flex items-center justify-center">
             <span className="text-ink-950 font-bold text-xs">M</span>
