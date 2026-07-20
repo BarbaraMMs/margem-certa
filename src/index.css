@@ -95,3 +95,37 @@ input[type="range"]::-moz-range-thumb {
   border: 2px solid white;
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
+
+/* Selo de assinatura (MarginStamp) e entrada do card de resultado — ver
+   docs/superpowers/specs/2026-07-20-redesign-visual-fintech-design.md */
+@keyframes mc-stamp-in {
+  0%   { transform: rotate(45deg) scale(0); }
+  60%  { transform: rotate(45deg) scale(1.08); }
+  100% { transform: rotate(45deg) scale(1); }
+}
+
+.mc-stamp-anim {
+  transform: rotate(45deg) scale(0);
+  animation: mc-stamp-in 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) 0.28s forwards;
+}
+
+@keyframes mc-card-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.mc-card-anim {
+  opacity: 0;
+  animation: mc-card-in 0.18s ease-out 0.05s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mc-stamp-anim {
+    animation: none;
+    transform: rotate(45deg) scale(1);
+  }
+  .mc-card-anim {
+    animation: none;
+    opacity: 1;
+  }
+}
