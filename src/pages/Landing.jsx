@@ -244,7 +244,7 @@ export default function Landing() {
 
           {/* Passo 4 */}
           <div ref={step4Ref} className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
-            <ResultCards resultados={resultados} marketplace={marketplace} />
+            <ResultCards resultados={resultados} marketplace={marketplace} margemAlvo={sliders.margemAlvo} />
           </div>
 
           {/* Comparador de faixas Shopee (auxiliar do Passo 4, só aparece para Shopee) */}
