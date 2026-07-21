@@ -2,7 +2,8 @@ import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PackageOpen, Pencil, Trash2, Lock } from 'lucide-react'
 import { getCatalogo, deleteProduto, saveProduto, isFreePlan, LIMITE_CATALOGO_FREE } from '../utils/storageUtils'
-import { calcularMelhorOferta, formatBRL, formatPct } from '../utils/pricingLogic'
+import { calcularMelhorOferta, formatBRL, formatPct, getDiagnostico } from '../utils/pricingLogic'
+import MarginStamp from '../components/MarginStamp'
 import { getMarketplaceLabel } from '../utils/storageUtils'
 import MarketplaceIcon from '../components/MarketplaceIcon'
 import { exportarCatalogoXLSX } from '../utils/exportUtils'
@@ -170,12 +171,15 @@ export default function Catalogo() {
 
                   {melhor ? (
                     <>
-                      <p className="text-xl font-bold text-green-700">{formatBRL(melhor.precoIdeal)}</p>
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="font-data text-xl font-bold text-green-700">{formatBRL(melhor.precoIdeal)}</p>
+                        <MarginStamp nivel={getDiagnostico(melhor.margemReal, produto.sliders.margemAlvo).nivel} variant="discreto" />
+                      </div>
                       <div className="flex items-center gap-3">
-                        <p className={`text-sm font-semibold ${corMargem(melhor.margemReal)}`}>
+                        <p className={`font-data text-sm font-semibold ${corMargem(melhor.margemReal)}`}>
                           Margem real: {formatPct(melhor.margemReal)}
                         </p>
-                        <p className={`text-sm font-medium ${melhor.lucroPorUnidade >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                        <p className={`font-data text-sm font-medium ${melhor.lucroPorUnidade >= 0 ? 'text-green-600' : 'text-red-500'}`}>
                           Lucro/un.: {formatBRL(melhor.lucroPorUnidade)}
                         </p>
                       </div>
