@@ -3,7 +3,7 @@ import { formatBRL } from '../utils/pricingLogic'
 
 function StatCard({ label, value, sub }) {
   return (
-    <div className="bg-white rounded-xl border border-brass-100 shadow-sm p-4 flex-1 text-center">
+    <div className="bg-card rounded-xl border border-brass-100 shadow-sm p-4 flex-1 text-center">
       <p className="text-xs text-gray-500 mb-1">{label}</p>
       <p className="text-lg font-bold text-gray-900">{value}</p>
       {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
