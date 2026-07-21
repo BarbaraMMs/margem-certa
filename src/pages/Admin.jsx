@@ -159,7 +159,7 @@ export default function Admin() {
 
         {/* "A ferramenta ajudou?" */}
         {feedbacks.length > 0 && (
-          <div className="bg-white rounded-xl border p-5">
+          <div className="bg-card rounded-xl border p-5">
             <h2 className="text-sm font-bold text-gray-700 mb-3">
               🎯 A ferramenta ajudou a ter visão mais clara?
             </h2>
@@ -301,7 +301,7 @@ export default function Admin() {
 
 function KpiCard({ icon, label, value, suffix }) {
   return (
-    <div className="bg-white rounded-xl border p-5">
+    <div className="bg-card rounded-xl border p-5">
       <div className="flex items-center gap-2 mb-3">{icon}<span className="text-xs text-gray-500">{label}</span></div>
       <p className="text-3xl font-bold text-gray-800">{value}
         {suffix && <span className="text-sm font-normal text-gray-400 ml-1">{suffix}</span>}
@@ -312,7 +312,7 @@ function KpiCard({ icon, label, value, suffix }) {
 
 function Section({ title, count, onExport, children }) {
   return (
-    <div className="bg-white rounded-xl border overflow-hidden">
+    <div className="bg-card rounded-xl border overflow-hidden">
       <div className="flex items-center justify-between px-5 py-4 border-b">
         <h2 className="text-sm font-bold text-gray-800">{title}
           <span className="ml-2 bg-gray-100 text-gray-500 text-xs font-medium px-2 py-0.5 rounded-full">{count}</span>

@@ -43,7 +43,7 @@ export default function ComparadorFaixasShopee({ custoFixoTotalBase, ads, impost
               return (
                 <tr
                   key={tier.label}
-                  className={`transition-colors ${isAtual ? 'bg-green-50' : 'bg-white hover:bg-gray-50'}`}
+                  className={`transition-colors ${isAtual ? 'bg-green-50' : 'bg-card hover:bg-gray-50'}`}
                 >
                   <td className="px-4 py-3 font-medium text-gray-800">
                     {tier.label}
@@ -81,7 +81,7 @@ export default function ComparadorFaixasShopee({ custoFixoTotalBase, ads, impost
           return (
             <div
               key={tier.label}
-              className={`rounded-xl border p-4 ${isAtual ? 'border-green-300 bg-green-50' : 'border-gray-200 bg-white'}`}
+              className={`rounded-xl border p-4 ${isAtual ? 'border-green-300 bg-green-50' : 'border-brass-100 bg-card'}`}
             >
               <div className="flex justify-between items-start mb-2">
                 <span className="font-semibold text-gray-800">{tier.label}</span>

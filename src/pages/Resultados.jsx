@@ -302,7 +302,7 @@ export default function Resultados() {
                                   </div>
                                 )
                                 return (
-                                  <div key={tipo} className={`rounded-xl p-4 text-sm ${r.melhorOpcao ? 'bg-white border-2 border-green-400 shadow-sm' : 'bg-white border border-gray-200'}`}>
+                                  <div key={tipo} className={`rounded-xl p-4 text-sm ${r.melhorOpcao ? 'bg-white border-2 border-green-400 shadow-sm' : 'bg-card border border-brass-100'}`}>
                                     <p className="font-semibold text-gray-800 capitalize mb-3 flex items-center gap-2">
                                       {tipo}
                                       {r.melhorOpcao && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Melhor opção</span>}

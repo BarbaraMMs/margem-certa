@@ -98,7 +98,7 @@ export default function VisitorModal({ onClose }) {
               type="submit"
               disabled={loading}
               className="w-full bg-ink-900 hover:bg-ink-800 disabled:opacity-60
-                         text-white font-semibold py-3 rounded-xl transition-colors text-sm"
+                         text-brass-100 font-semibold py-3 rounded-xl transition-colors text-sm"
             >
               {loading ? 'Registrando...' : 'Começar a usar a calculadora →'}
             </button>
