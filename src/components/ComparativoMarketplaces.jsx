@@ -1,8 +1,9 @@
 import { useMemo } from 'react'
 import { Scale, Info } from 'lucide-react'
-import { calcularPrecificacao, formatBRL, formatPct, MARKETPLACES_COM_CLASSICO_PREMIUM } from '../utils/pricingLogic'
+import { calcularPrecificacao, formatBRL, formatPct, getDiagnostico, MARKETPLACES_COM_CLASSICO_PREMIUM } from '../utils/pricingLogic'
 import { getMarketplaces, getCondicoes } from '../utils/storageUtils'
 import MarketplaceIcon from './MarketplaceIcon'
+import MarginStamp from './MarginStamp'
 
 export default function ComparativoMarketplaces({ costs, sliders, condicoes, categoria, marketplace, customFees, campanhaShopee }) {
   const condicoesAtivas = useMemo(() => condicoes || getCondicoes(), [condicoes])
@@ -44,8 +45,6 @@ export default function ComparativoMarketplaces({ costs, sliders, condicoes, cat
 
   if (!linhas.length) return null
 
-  const melhorMargem = linhas[0].melhor.margemReal
-
   return (
     <div>
       <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-800 mb-1">
@@ -59,123 +58,65 @@ export default function ComparativoMarketplaces({ costs, sliders, condicoes, cat
         Este comparativo usa os mesmos custos que você preencheu acima e recalcula o preço ideal e a margem para cada marketplace configurado em Condições Comerciais.
       </p>
 
-      {/* Tabela desktop */}
-      <div className="hidden sm:block overflow-x-auto rounded-xl border border-gray-200">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
-              <th className="text-left px-4 py-3 font-semibold">Marketplace</th>
-              <th className="text-left px-4 py-3 font-semibold">Anúncio</th>
-              <th className="text-right px-4 py-3 font-semibold">Taxa aplicada</th>
-              <th className="text-right px-4 py-3 font-semibold">Custos fixos extras</th>
-              <th className="text-right px-4 py-3 font-semibold">Custo de transação</th>
-              <th className="text-right px-4 py-3 font-semibold">Preço ideal</th>
-              <th className="text-right px-4 py-3 font-semibold">Margem</th>
-              <th className="text-right px-4 py-3 font-semibold">Lucro / un.</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {linhas.map(({ mkt, melhor, tipo }, i) => {
-              const isMelhor = melhor.margemReal === melhorMargem && i === 0
-              const custosFixosExtras = (melhor.detalheTaxas.taxaFixaReais || 0) + (melhor.detalheTaxas.freteCoParticipacaoReais || 0)
-              const custoTransacao = ((melhor.detalheTaxas.taxaTransacao || 0) + (melhor.detalheTaxas.taxaCampanha || 0)) * melhor.precoIdeal
-              return (
-                <tr
-                  key={mkt.id}
-                  className={`transition-colors ${isMelhor ? 'bg-green-50' : 'bg-white hover:bg-gray-50'}`}
-                >
-                  <td className="px-4 py-3 font-medium text-gray-800">
-                    <span className="inline-flex items-center gap-2">
-                      <MarketplaceIcon marketplace={mkt.id} sizePx={18} />
-                      {mkt.label}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-gray-500">{tipo}</td>
-                  <td className="px-4 py-3 text-right text-gray-700">
-                    {formatPct(melhor.detalheTaxas.taxaMarketplace)}
-                  </td>
-                  <td className="px-4 py-3 text-right text-gray-700">
-                    {custosFixosExtras > 0 ? formatBRL(custosFixosExtras) : '—'}
-                  </td>
-                  <td className="px-4 py-3 text-right text-gray-700">
-                    {custoTransacao > 0 ? formatBRL(custoTransacao) : '—'}
-                  </td>
-                  <td className="px-4 py-3 text-right font-semibold text-gray-800">
-                    {formatBRL(melhor.precoIdeal)}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <span className={`font-bold ${isMelhor ? 'text-green-700' : melhor.margemReal < 0.05 ? 'text-red-500' : 'text-gray-700'}`}>
-                      {formatPct(melhor.margemReal)}
-                      {isMelhor && <span className="ml-1 text-green-600">★</span>}
-                    </span>
-                  </td>
-                  <td className={`px-4 py-3 text-right font-medium ${melhor.lucroPorUnidade >= 0 ? 'text-green-600' : 'text-red-500'}`}>
-                    {formatBRL(melhor.lucroPorUnidade)}
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Cards mobile */}
-      <div className="sm:hidden space-y-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {linhas.map(({ mkt, melhor, tipo }, i) => {
-          const isMelhor = melhor.margemReal === melhorMargem && i === 0
+          const isMelhor = i === 0
           const custosFixosExtras = (melhor.detalheTaxas.taxaFixaReais || 0) + (melhor.detalheTaxas.freteCoParticipacaoReais || 0)
           const custoTransacao = ((melhor.detalheTaxas.taxaTransacao || 0) + (melhor.detalheTaxas.taxaCampanha || 0)) * melhor.precoIdeal
+          const diag = getDiagnostico(melhor.margemReal, sliders.margemAlvo)
+
           return (
             <div
               key={mkt.id}
-              className={`rounded-xl border p-4 ${isMelhor ? 'border-green-300 bg-green-50' : 'border-gray-200 bg-white'}`}
+              className={`rounded-2xl border p-4 shadow-[0_16px_40px_rgba(22,35,63,0.06)] bg-card ${isMelhor ? 'border-brass-400 ring-2 ring-brass-100' : 'border-brass-100'}`}
             >
-              <div className="flex justify-between items-start mb-2">
+              <div className="flex justify-between items-start mb-3">
                 <span className="font-semibold text-gray-800 inline-flex items-center gap-2">
                   <MarketplaceIcon marketplace={mkt.id} sizePx={18} />
                   {mkt.label}
                 </span>
-                {isMelhor && (
-                  <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-semibold">★ Melhor</span>
-                )}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {isMelhor && (
+                    <span className="text-[10px] bg-brass-100 text-brass-800 px-2 py-0.5 rounded-full font-bold">★ Melhor</span>
+                  )}
+                  <MarginStamp nivel={diag.nivel} variant="discreto" />
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>
                   <p className="text-gray-400 text-xs">Anúncio</p>
-                  <p className="font-medium text-gray-700">{tipo}</p>
+                  <p className="font-data font-medium text-gray-700">{tipo}</p>
                 </div>
                 <div>
                   <p className="text-gray-400 text-xs">Taxa aplicada</p>
-                  <p className="font-medium text-gray-700">{formatPct(melhor.detalheTaxas.taxaMarketplace)}</p>
+                  <p className="font-data font-medium text-gray-700">{formatPct(melhor.detalheTaxas.taxaMarketplace)}</p>
                 </div>
                 <div>
                   <p className="text-gray-400 text-xs">Custos fixos extras</p>
-                  <p className="font-medium text-gray-700">
+                  <p className="font-data font-medium text-gray-700">
                     {custosFixosExtras > 0 ? formatBRL(custosFixosExtras) : '—'}
                   </p>
                 </div>
                 <div>
                   <p className="text-gray-400 text-xs">Custo de transação</p>
-                  <p className="font-medium text-gray-700">
+                  <p className="font-data font-medium text-gray-700">
                     {custoTransacao > 0 ? formatBRL(custoTransacao) : '—'}
                   </p>
                 </div>
                 <div>
                   <p className="text-gray-400 text-xs">Preço ideal</p>
-                  <p className="font-semibold text-gray-800">{formatBRL(melhor.precoIdeal)}</p>
+                  <p className="font-data font-semibold text-gray-800">{formatBRL(melhor.precoIdeal)}</p>
                 </div>
                 <div>
                   <p className="text-gray-400 text-xs">Margem</p>
-                  <p className={`font-bold ${isMelhor ? 'text-green-700' : melhor.margemReal < 0.05 ? 'text-red-500' : 'text-gray-700'}`}>
-                    {formatPct(melhor.margemReal)}
-                  </p>
+                  <p className="font-data font-bold text-gray-800">{formatPct(melhor.margemReal)}</p>
                 </div>
-                <div>
-                  <p className="text-gray-400 text-xs">Lucro / un.</p>
-                  <p className={`font-medium ${melhor.lucroPorUnidade >= 0 ? 'text-green-600' : 'text-red-500'}`}>
-                    {formatBRL(melhor.lucroPorUnidade)}
-                  </p>
-                </div>
+              </div>
+              <div className="mt-2 pt-2 border-t border-gray-100 flex justify-between items-center">
+                <span className="text-gray-400 text-xs">Lucro / un.</span>
+                <span className={`font-data font-semibold text-sm ${melhor.lucroPorUnidade >= 0 ? 'text-profit' : 'text-red-500'}`}>
+                  {formatBRL(melhor.lucroPorUnidade)}
+                </span>
               </div>
             </div>
           )
