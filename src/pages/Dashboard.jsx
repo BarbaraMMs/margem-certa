@@ -10,7 +10,7 @@ function SummaryCard({ icon: Icon, label, value, sub, cor = 'gray' }) {
     green:  'bg-green-50 border-green-100 text-green-700',
     red:    'bg-red-50 border-red-100 text-red-600',
     amber:  'bg-amber-50 border-amber-100 text-amber-700',
-    gray:   'bg-white border-gray-100 text-gray-700',
+    gray:   'bg-card border-brass-100 text-gray-700',
   }
   return (
     <div className={`rounded-2xl border shadow-sm p-5 ${cores[cor]}`}>
@@ -37,7 +37,7 @@ function BarraHorizontal({ label, marketplace, margem, maxMargem }) {
         <MarketplaceIcon marketplace={marketplace} sizePx={16} />
         {label}
       </div>
-      <div className="flex-1 bg-gray-100 rounded-full h-4 overflow-hidden">
+      <div className="flex-1 bg-brass-50 rounded-full h-4 overflow-hidden">
         <div
           className={`h-4 rounded-full transition-all duration-500 ${cor}`}
           style={{ width: `${Math.max(pct, 3)}%` }}
