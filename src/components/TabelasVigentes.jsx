@@ -36,7 +36,7 @@ export default function TabelasVigentes() {
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-card rounded-2xl shadow-sm border border-brass-100 p-6">
           {/* Tabs */}
           <div className="flex gap-1 mb-5 border-b border-gray-200">
             {MARKETPLACES_FIXOS.map(mkt => (

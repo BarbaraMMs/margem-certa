@@ -249,7 +249,7 @@ export default function ExportButton({
   )
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-5">
+    <div className="bg-card rounded-2xl border border-brass-100 shadow-md p-5">
       <div className="mb-4">
         <label htmlFor="nomeProduto" className="block text-sm font-medium text-gray-700 mb-1">
           Nome do produto (para o PDF)
@@ -267,7 +267,7 @@ export default function ExportButton({
       <div className="flex flex-wrap gap-3">
         <button
           onClick={handlePDF}
-          className="flex items-center gap-2 bg-ink-900 hover:bg-ink-800 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+          className="flex items-center gap-2 bg-ink-900 hover:bg-ink-800 text-brass-100 font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
         >
           <FileText className="w-4 h-4" strokeWidth={2} /> Exportar PDF
         </button>

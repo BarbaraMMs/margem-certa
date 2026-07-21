@@ -112,7 +112,7 @@ export default function ComparativoMarketplaces({ costs, sliders, condicoes, cat
                   <p className="font-data font-bold text-gray-800">{formatPct(melhor.margemReal)}</p>
                 </div>
               </div>
-              <div className="mt-2 pt-2 border-t border-gray-100 flex justify-between items-center">
+              <div className="mt-2 pt-2 border-t border-brass-100 flex justify-between items-center">
                 <span className="text-gray-400 text-xs">Lucro / un.</span>
                 <span className={`font-data font-semibold text-sm ${melhor.lucroPorUnidade >= 0 ? 'text-profit' : 'text-red-500'}`}>
                   {formatBRL(melhor.lucroPorUnidade)}

@@ -56,7 +56,7 @@ function ResultCard({ titulo, dados, destaque, margemAlvo }) {
       )}
       <h3 className="text-base font-semibold text-gray-700 mb-4">{titulo}</h3>
       <div className="space-y-3">
-        <div className="flex flex-col gap-1 py-2 border-b border-gray-100">
+        <div className="flex flex-col gap-1 py-2 border-b border-brass-100">
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-500">Preço de venda ideal</span>
             <span className={`font-display ${destaque ? 'text-5xl font-black' : 'text-4xl font-black'} text-ink-900`}>{formatBRL(dados.precoIdeal)}</span>

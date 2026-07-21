@@ -51,7 +51,7 @@ export default function Configuracoes() {
         </div>
 
         {/* Tabela */}
-        <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+        <div className="bg-card rounded-2xl shadow-md p-6 border border-brass-100">
           <CondicoesTable condicoes={condicoes} onChange={setCondicoes} />
         </div>
 
@@ -59,7 +59,7 @@ export default function Configuracoes() {
         <div className="mt-6 flex flex-wrap items-center gap-3">
           <button
             onClick={handleSalvar}
-            className="bg-ink-900 hover:bg-ink-800 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors"
+            className="bg-ink-900 hover:bg-ink-800 text-brass-100 font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors"
           >
             Salvar condições
           </button>

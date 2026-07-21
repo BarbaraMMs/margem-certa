@@ -75,7 +75,7 @@ export default function Admin() {
   if (!authed) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-8">
+        <div className="bg-card rounded-2xl shadow-xl max-w-sm w-full p-8">
           <div className="flex items-center gap-2 mb-6">
             <Lock className="w-5 h-5 text-brass-600" />
             <h1 className="text-lg font-bold text-gray-800">Painel Admin — MargemCerta</h1>
@@ -93,7 +93,7 @@ export default function Admin() {
             {passErr && <p className="text-red-500 text-xs">Senha incorreta.</p>}
             <button
               type="submit"
-              className="w-full bg-ink-900 hover:bg-ink-800 text-white font-semibold py-2.5 rounded-xl text-sm"
+              className="w-full bg-ink-900 hover:bg-ink-800 text-brass-100 font-semibold py-2.5 rounded-xl text-sm"
             >
               Entrar
             </button>

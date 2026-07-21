@@ -29,7 +29,7 @@ export default function VisitorModal({ onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+      <div className="relative bg-card rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
 
         {/* Header gradiente */}
         <div className="bg-gradient-to-br from-ink-900 to-ink-700 px-8 py-7 text-white">

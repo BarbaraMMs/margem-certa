@@ -150,7 +150,7 @@ export default function CondicoesTable({ condicoes, onChange }) {
             </div>
             <button
               onClick={addMarketplace}
-              className="bg-ink-900 hover:bg-ink-800 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+              className="bg-ink-900 hover:bg-ink-800 text-brass-100 text-sm font-medium px-4 py-2 rounded-lg transition-colors"
             >
               Criar
             </button>
@@ -301,7 +301,7 @@ export default function CondicoesTable({ condicoes, onChange }) {
               />
               <button
                 onClick={() => addCategory(mkt)}
-                className="bg-ink-900 hover:bg-ink-800 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                className="bg-ink-900 hover:bg-ink-800 text-brass-100 text-sm font-medium px-4 py-2 rounded-lg transition-colors"
               >
                 + Adicionar
               </button>

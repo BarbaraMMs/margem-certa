@@ -77,7 +77,7 @@ export default function FeedbackSurvey({ onClose }) {
             </button>
             <button
               onClick={() => setStep(1)}
-              className="flex-1 bg-ink-900 hover:bg-ink-800 text-white font-semibold
+              className="flex-1 bg-ink-900 hover:bg-ink-800 text-brass-100 font-semibold
                          py-2.5 rounded-xl transition-colors text-sm flex items-center justify-center gap-1"
             >
               Próximo <ChevronRight className="w-4 h-4" />
@@ -197,7 +197,7 @@ export default function FeedbackSurvey({ onClose }) {
         </p>
         <button
           onClick={onClose}
-          className="bg-ink-900 hover:bg-ink-800 text-white font-semibold
+          className="bg-ink-900 hover:bg-ink-800 text-brass-100 font-semibold
                      px-8 py-3 rounded-xl transition-colors text-sm"
         >
           Continuar explorando
@@ -212,7 +212,7 @@ export default function FeedbackSurvey({ onClose }) {
 function Overlay({ children }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-card rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
         {children}
       </div>
     </div>

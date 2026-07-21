@@ -376,7 +376,7 @@ export default function SimuladorFrete({
             disabled={!podeAplicar}
             className={`w-full py-3 rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2 ${
               podeAplicar
-                ? 'bg-ink-900 hover:bg-ink-800 text-white cursor-pointer'
+                ? 'bg-ink-900 hover:bg-ink-800 text-brass-100 cursor-pointer'
                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
             }`}
           >
@@ -391,7 +391,7 @@ export default function SimuladorFrete({
       )}
 
       {/* Rodapé sempre visível */}
-      <div className="pt-3 border-t border-gray-100">
+      <div className="pt-3 border-t border-brass-100">
         <p className="text-xs text-gray-400 leading-relaxed">
           ⚠️ Os valores são estimativas baseadas em tabelas de referência. As tarifas variam por rota, peso, dimensão e contratos específicos de cada seller com o ML. Consulte sempre o painel oficial antes de tomar decisões de precificação.
         </p>

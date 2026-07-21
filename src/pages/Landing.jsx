@@ -193,7 +193,7 @@ export default function Landing() {
           </div>
 
           {/* Passo 1 */}
-          <div ref={step1Ref} className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+          <div ref={step1Ref} className="bg-card rounded-2xl shadow-md p-6 border border-brass-100">
             <MarketplaceSelector
               value={marketplace}
               onChange={setMarketplace}
@@ -203,13 +203,13 @@ export default function Landing() {
           </div>
 
           {/* Passo 2 */}
-          <div ref={step2Ref} className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+          <div ref={step2Ref} className="bg-card rounded-2xl shadow-md p-6 border border-brass-100">
             <CostInputs values={costs} onChange={setCosts} />
           </div>
 
           {/* Simulador de Frete (auxiliar do Passo 2, só faz sentido para Mercado Livre) */}
           {marketplace === 'mercadolivre' && (
-            <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+            <div className="bg-card rounded-2xl shadow-md p-6 border border-brass-100">
               <SimuladorFrete
                 marketplace={marketplace}
                 precoIdealClassico={resultados?.classico?.precoIdeal ?? null}
@@ -221,7 +221,7 @@ export default function Landing() {
 
           {/* Campanha Shopee (auxiliar do Passo 2, só aparece para Shopee) */}
           {marketplace === 'shopee' && (
-            <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+            <div className="bg-card rounded-2xl shadow-md p-6 border border-brass-100">
               <label className="flex items-start gap-2 text-sm text-gray-700 cursor-pointer">
                 <input
                   type="checkbox"
@@ -238,18 +238,18 @@ export default function Landing() {
           )}
 
           {/* Passo 3 */}
-          <div ref={step3Ref} className="bg-white rounded-2xl shadow-md p-6 border border-gray-100 space-y-6">
+          <div ref={step3Ref} className="bg-card rounded-2xl shadow-md p-6 border border-brass-100 space-y-6">
             <VariableSliders values={sliders} onChange={setSliders} />
           </div>
 
           {/* Passo 4 */}
-          <div ref={step4Ref} className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+          <div ref={step4Ref} className="bg-card rounded-2xl shadow-md p-6 border border-brass-100">
             <ResultCards resultados={resultados} marketplace={marketplace} margemAlvo={sliders.margemAlvo} />
           </div>
 
           {/* Comparador de faixas Shopee (auxiliar do Passo 4, só aparece para Shopee) */}
           {marketplace === 'shopee' && melhorDado && !melhorDado.error && (
-            <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+            <div className="bg-card rounded-2xl shadow-md p-6 border border-brass-100">
               <ComparadorFaixasShopee
                 custoFixoTotalBase={melhorDado.custoFixoTotalBase}
                 ads={sliders.ads}
@@ -263,7 +263,7 @@ export default function Landing() {
           )}
 
           {/* Comparativo entre Marketplaces (auxiliar do Passo 4) */}
-          <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+          <div className="bg-card rounded-2xl shadow-md p-6 border border-brass-100">
             <ComparativoMarketplaces
               costs={costs}
               sliders={sliders}
@@ -276,7 +276,7 @@ export default function Landing() {
           </div>
 
           {/* Glossário rápido (auxiliar do Passo 4) */}
-          <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+          <div className="bg-card rounded-2xl shadow-md p-6 border border-brass-100">
             <div className="flex items-center justify-between gap-3 mb-4">
               <div>
                 <h2 className="text-lg font-semibold text-gray-800">Glossário rápido</h2>
@@ -398,7 +398,7 @@ export default function Landing() {
           {/* Modal salvar produto */}
           {modalSalvar && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-              <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm">
+              <div className="bg-card rounded-2xl shadow-xl p-6 w-full max-w-sm">
                 <h3 className="text-base font-semibold text-gray-800 mb-1">Salvar produto</h3>
                 <p className="text-xs text-gray-400 mb-4">Dê um nome para identificar este produto no catálogo.</p>
                 <input
@@ -538,7 +538,7 @@ export default function Landing() {
                       setSavedFeedback(true)
                       setTimeout(() => setSavedFeedback(false), 3000)
                     }}
-                    className="flex-1 bg-ink-900 hover:bg-ink-800 text-white font-semibold py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+                    className="flex-1 bg-ink-900 hover:bg-ink-800 text-brass-100 font-semibold py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
                   >
                     Salvar
                   </button>
@@ -565,7 +565,7 @@ export default function Landing() {
 
       {showUpgradeModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
+          <div className="bg-card rounded-2xl shadow-xl p-6 w-full max-w-md">
             <h3 className="text-lg font-semibold text-gray-900 mb-3">Recurso disponível no plano Pro</h3>
             <p className="text-sm text-gray-600 mb-4">
               O plano gratuito permite até 10 produtos no catálogo. Para salvar mais produtos e usar recursos avançados, atualize para o Pro.
@@ -582,7 +582,7 @@ export default function Landing() {
               <div className="flex flex-wrap gap-2">
                 <a
                   href="/dashboard"
-                  className="flex-1 bg-ink-900 hover:bg-ink-800 text-white font-semibold px-4 py-3 rounded-xl text-sm text-center"
+                  className="flex-1 bg-ink-900 hover:bg-ink-800 text-brass-100 font-semibold px-4 py-3 rounded-xl text-sm text-center"
                 >
                   Quero saber mais
                 </a>

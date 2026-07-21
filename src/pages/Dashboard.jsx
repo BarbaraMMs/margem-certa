@@ -85,7 +85,7 @@ export default function Dashboard() {
     return (
       <section className="py-10 px-4 max-w-5xl mx-auto">
         <h1 className="font-display text-2xl font-semibold text-ink-950 mb-2">Painel</h1>
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-10 text-center">
+        <div className="bg-card rounded-2xl border border-brass-100 shadow-md p-10 text-center">
           <PackageOpen className="w-10 h-10 text-gray-300 mx-auto mb-3" strokeWidth={1.5} />
           <p className="text-gray-600 font-medium mb-1">Nenhum dado para exibir</p>
           <p className="text-gray-400 text-sm mb-5">
@@ -93,7 +93,7 @@ export default function Dashboard() {
           </p>
           <Link
             to="/catalogo"
-            className="bg-ink-900 hover:bg-ink-800 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors inline-block"
+            className="bg-ink-900 hover:bg-ink-800 text-brass-100 font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors inline-block"
           >
             Ir para o catálogo →
           </Link>
@@ -170,7 +170,7 @@ export default function Dashboard() {
 
       {/* Gráfico de barras por marketplace */}
       {porMarketplace.length > 0 && (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <div className="bg-card rounded-2xl border border-brass-100 shadow-sm p-6">
           <h2 className="text-base font-semibold text-gray-800 mb-1">Margem média por marketplace</h2>
           <p className="text-xs text-gray-400 mb-5">
             Média das melhores margens (Clássico ou Premium) de cada produto no marketplace.
@@ -190,7 +190,7 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
-          <div className="flex items-center gap-4 mt-5 pt-4 border-t border-gray-100 text-xs text-gray-400">
+          <div className="flex items-center gap-4 mt-5 pt-4 border-t border-brass-100 text-xs text-gray-400">
             <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-green-500 inline-block" /> ≥ 15% (saudável)</span>
             <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-amber-400 inline-block" /> 5–15% (atenção)</span>
             <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-red-400 inline-block" /> &lt; 5% (crítico)</span>
@@ -199,8 +199,8 @@ export default function Dashboard() {
       )}
 
       {/* Tabela de todos os produtos */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+      <div className="bg-card rounded-2xl border border-brass-100 shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-brass-100 flex items-center justify-between">
           <h2 className="text-base font-semibold text-gray-800">Todos os produtos</h2>
           <Link to="/catalogo" className="text-xs text-brass-600 hover:underline">
             Gerenciar catálogo →

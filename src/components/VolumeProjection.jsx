@@ -3,7 +3,7 @@ import { formatBRL } from '../utils/pricingLogic'
 
 function StatCard({ label, value, sub }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex-1 text-center">
+    <div className="bg-white rounded-xl border border-brass-100 shadow-sm p-4 flex-1 text-center">
       <p className="text-xs text-gray-500 mb-1">{label}</p>
       <p className="text-lg font-bold text-gray-900">{value}</p>
       {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
@@ -30,7 +30,7 @@ export default function VolumeProjection({ lucroPorUnidade, precoIdeal, onUnidad
         <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-brass-100 text-ink-900 text-sm font-bold mr-2">6</span>
         Projeção por volume
       </h2>
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-5">
+      <div className="bg-card rounded-2xl border border-brass-100 shadow-md p-5">
         <div className="mb-4">
           <div className="flex items-center justify-between mb-1">
             <label htmlFor="unidades" className="text-sm font-medium text-gray-700">

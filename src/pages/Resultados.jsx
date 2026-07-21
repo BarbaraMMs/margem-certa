@@ -178,7 +178,7 @@ export default function Resultados() {
             </button>
             <button
               onClick={exportCSV}
-              className="bg-ink-900 hover:bg-ink-800 text-white text-sm font-semibold px-5 py-2 rounded-xl transition-colors flex items-center gap-2"
+              className="bg-ink-900 hover:bg-ink-800 text-brass-100 text-sm font-semibold px-5 py-2 rounded-xl transition-colors flex items-center gap-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -190,11 +190,11 @@ export default function Resultados() {
 
         {/* Cards de resumo */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 text-center">
+          <div className="bg-card rounded-2xl border border-brass-100 shadow-sm p-4 text-center">
             <p className="text-2xl font-bold text-gray-900">{resultados.length}</p>
             <p className="text-xs text-gray-500 mt-1">Total de produtos</p>
           </div>
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 text-center">
+          <div className="bg-card rounded-2xl border border-brass-100 shadow-sm p-4 text-center">
             <p className="text-2xl font-bold text-gray-900">{contadores.mediaMargemPct.toFixed(1)}%</p>
             <p className="text-xs text-gray-500 mt-1">Margem média</p>
           </div>
@@ -222,7 +222,7 @@ export default function Resultados() {
               onClick={() => setFiltro(f)}
               className={`text-sm font-medium px-4 py-1.5 rounded-lg transition-colors ${
                 filtro === f
-                  ? 'bg-ink-900 text-white'
+                  ? 'bg-ink-900 text-brass-100'
                   : 'bg-white border border-gray-200 text-gray-600 hover:border-brass-400'
               }`}
             >
@@ -232,7 +232,7 @@ export default function Resultados() {
         </div>
 
         {/* Tabela */}
-        <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+        <div className="bg-card rounded-2xl shadow-md border border-brass-100 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">

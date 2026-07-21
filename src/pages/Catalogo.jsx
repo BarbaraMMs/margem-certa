@@ -101,8 +101,8 @@ export default function Catalogo() {
             title={free ? 'Exportação disponível no plano Pro' : undefined}
             className={`font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors flex items-center gap-2 ${
               free
-                ? 'bg-ink-900 text-white opacity-50 cursor-not-allowed'
-                : 'bg-ink-900 hover:bg-ink-800 text-white cursor-pointer'
+                ? 'bg-ink-900 text-brass-100 opacity-50 cursor-not-allowed'
+                : 'bg-ink-900 hover:bg-ink-800 text-brass-100 cursor-pointer'
             }`}
           >
             {free && <Lock className="w-4 h-4" strokeWidth={2} />} Exportar catálogo (.xlsx)
@@ -122,13 +122,13 @@ export default function Catalogo() {
         )}
 
         {catalogo.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-10 text-center">
+          <div className="bg-card rounded-2xl border border-brass-100 shadow-md p-10 text-center">
             <PackageOpen className="w-10 h-10 text-gray-300 mx-auto mb-3" strokeWidth={1.5} />
             <p className="text-gray-600 font-medium mb-1">Nenhum produto salvo ainda.</p>
             <p className="text-gray-400 text-sm mb-5">Calcule o preço de um produto e salve aqui para acompanhar sua margem.</p>
             <button
               onClick={() => navigate('/')}
-              className="bg-ink-900 hover:bg-ink-800 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+              className="bg-ink-900 hover:bg-ink-800 text-brass-100 font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
             >
               Calcular meu primeiro produto
             </button>
@@ -142,7 +142,7 @@ export default function Catalogo() {
               const estaConfirmando = confirmandoId === produto.id
 
               return (
-                <div key={produto.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2">
+                <div key={produto.id} className="bg-card rounded-2xl border border-brass-100 shadow-sm p-5 flex flex-col gap-2">
                   {estaEditando ? (
                     <div className="flex items-center gap-2">
                       <input
@@ -153,7 +153,7 @@ export default function Catalogo() {
                         onKeyDown={e => { if (e.key === 'Enter') handleSalvarNome(produto); if (e.key === 'Escape') setEditandoId(null) }}
                         className="border border-brass-400 rounded-lg px-3 py-1.5 text-sm font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-brass-300 w-full"
                       />
-                      <button onClick={() => handleSalvarNome(produto)} className="text-xs bg-ink-900 text-white px-3 py-1.5 rounded-lg font-semibold hover:bg-ink-800 cursor-pointer shrink-0">Salvar</button>
+                      <button onClick={() => handleSalvarNome(produto)} className="text-xs bg-ink-900 text-brass-100 px-3 py-1.5 rounded-lg font-semibold hover:bg-ink-800 cursor-pointer shrink-0">Salvar</button>
                       <button onClick={() => setEditandoId(null)} className="text-xs text-gray-500 hover:text-gray-700 cursor-pointer shrink-0">Cancelar</button>
                     </div>
                   ) : (
@@ -203,7 +203,7 @@ export default function Catalogo() {
                   <div className="flex items-center gap-2 mt-2">
                     <button
                       onClick={() => handleCalcular(produto)}
-                      className="bg-ink-900 hover:bg-ink-800 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition-colors cursor-pointer min-h-[44px]"
+                      className="bg-ink-900 hover:bg-ink-800 text-brass-100 text-xs font-semibold px-4 py-2.5 rounded-lg transition-colors cursor-pointer min-h-[44px]"
                     >
                       Recalcular
                     </button>

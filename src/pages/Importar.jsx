@@ -78,7 +78,7 @@ export default function Importar() {
       </div>
 
       {/* Step 1: Download template */}
-      <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100 mb-6">
+      <div className="bg-card rounded-2xl shadow-md p-6 border border-brass-100 mb-6">
         <h2 className="font-semibold text-gray-800 mb-2 flex items-center gap-2">
           <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brass-100 text-ink-900 text-xs font-bold">1</span>
           Baixe o template
@@ -97,7 +97,7 @@ export default function Importar() {
       </div>
 
       {/* Step 2: Upload */}
-      <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100 mb-6">
+      <div className="bg-card rounded-2xl shadow-md p-6 border border-brass-100 mb-6">
         <h2 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
           <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brass-100 text-ink-900 text-xs font-bold">2</span>
           Faça o upload da planilha
@@ -137,7 +137,7 @@ export default function Importar() {
 
       {/* Step 3: Preview */}
       {resultado && (
-        <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100 mb-6">
+        <div className="bg-card rounded-2xl shadow-md p-6 border border-brass-100 mb-6">
           <h2 className="font-semibold text-gray-800 mb-1 flex items-center gap-2">
             <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-brass-100 text-ink-900 text-xs font-bold">3</span>
             Preview dos dados
@@ -189,7 +189,7 @@ export default function Importar() {
                 </tbody>
               </table>
               {resultado.valid.length > 5 && (
-                <p className="text-xs text-gray-400 px-3 py-2 border-t border-gray-100">
+                <p className="text-xs text-gray-400 px-3 py-2 border-t border-brass-100">
                   … e mais {resultado.valid.length - 5} produto(s) não exibido(s) no preview.
                 </p>
               )}
@@ -203,7 +203,7 @@ export default function Importar() {
         <div className="flex justify-end">
           <button
             onClick={calcular}
-            className="bg-ink-900 hover:bg-ink-800 text-white font-semibold px-8 py-3 rounded-xl text-sm transition-colors flex items-center gap-2"
+            className="bg-ink-900 hover:bg-ink-800 text-brass-100 font-semibold px-8 py-3 rounded-xl text-sm transition-colors flex items-center gap-2"
           >
             Calcular todos os produtos
             <ArrowRight className="w-4 h-4" strokeWidth={2} />

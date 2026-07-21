@@ -29,7 +29,7 @@ export default function ScenarioSimulator({ precoIdeal, lucroPorUnidade, custoFi
         <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-brass-100 text-ink-900 text-sm font-bold mr-2">7</span>
         Simulador de cenários
       </h2>
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-5">
+      <div className="bg-card rounded-2xl border border-brass-100 shadow-md p-5">
         <p className="text-sm text-gray-600 mb-4">Quero vender por quanto?</p>
         <div className="flex items-center border-2 border-gray-200 focus-within:border-brass-400 rounded-lg overflow-hidden bg-white max-w-xs mb-5 transition-colors">
           <span className="px-3 py-2.5 text-gray-500 bg-gray-50 border-r border-gray-200 text-sm font-medium select-none">R$</span>
